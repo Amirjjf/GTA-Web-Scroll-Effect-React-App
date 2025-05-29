@@ -20,7 +20,7 @@ const HeroSection = () => {
 
     gsap.to(".overlay", {
       opacity: 0,
-      duration: 2.8,
+      duration: 1.2,
       ease: "power3.out",
       onComplete: () => {
         if (document.body) {
@@ -183,11 +183,9 @@ const HeroSection = () => {
       <div className="overlay"></div>
       <div className="hero-1-container">
         <div className="hero-main-container">
-          <img className="hero-main-logo" draggable="false" src="/Logo.png" alt="gta logo" />
           <img className="hero-main-image" draggable="false" src="/Background.jpg" alt="gta logo" />
         </div>
         <div className="hero-text-logo-container">
-          <div className="hero-text-logo"></div>
           <div>
             <h3 className="hero-text"> Coming<br /> May 26<br /> 2026 </h3>
           </div>
