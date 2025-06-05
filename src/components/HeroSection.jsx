@@ -17,6 +17,7 @@ const HeroSection = () => {
   const overlayCopyRef = useRef(null);
   const logoMaskRef = useRef(null);
   const lenisRef = useRef(null);
+  const introRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -33,9 +34,7 @@ const HeroSection = () => {
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
-    gsap.ticker.lagSmoothing(0);
-
-    const heroImgContainer = heroImgContainerRef.current;
+    gsap.ticker.lagSmoothing(0);    const heroImgContainer = heroImgContainerRef.current;
     const heroImgLogo = heroImgLogoRef.current;
     const heroImgCopy = heroImgCopyRef.current;
     const fadeOverlay = fadeOverlayRef.current;
@@ -91,9 +90,7 @@ const HeroSection = () => {
     }
 
     updateLogoPosition();
-    window.addEventListener('resize', updateLogoPosition);
-
-    ScrollTrigger.create({
+    window.addEventListener('resize', updateLogoPosition);    ScrollTrigger.create({
       trigger: heroRef.current,
       start: "top top",
       end: `${window.innerHeight * 5}px`,
@@ -145,7 +142,7 @@ const HeroSection = () => {
 
           overlayCopy.style.background = 'linear-gradient(to bottom right,rgb(255, 55, 162) 0%,rgb(254, 105, 160) 33%,rgb(255, 191, 165) 66%,rgb(251, 223, 175) 100%)';
           overlayCopy.style.backgroundClip = 'text';
-          overlayCopy.style.webkitTextFillColor = 'transparent'; // Retain compatibility for text fill
+          overlayCopy.style.webkitTextFillColor = 'transparent';
 
           gsap.set(overlayCopy, {
             scale: overlayCopyScale,
@@ -153,6 +150,28 @@ const HeroSection = () => {
           });
         } else if (scrollProgress <= 0.6) {
           gsap.set(overlayCopy, {
+            opacity: 0,
+          });
+        }
+
+        // Fade out hero section and fade in intro section at the end
+        if (scrollProgress > 0.85) {
+          const fadeOutProgress = (scrollProgress - 0.85) * (1 / 0.15); // Last 15% of scroll
+          const heroOpacity = 1 - fadeOutProgress;
+          const introOpacity = fadeOutProgress;
+
+          // Fade out all hero elements
+          gsap.set([heroImgContainer, svgOverlay, overlayCopy, fadeOverlay], {
+            opacity: heroOpacity,
+          });
+
+          // Fade in intro section
+          gsap.set(introRef.current, {
+            opacity: introOpacity,
+          });
+        } else {
+          // Ensure intro is hidden when not in fade range
+          gsap.set(introRef.current, {
             opacity: 0,
           });
         }
@@ -205,8 +224,7 @@ const HeroSection = () => {
           <h1 ref={overlayCopyRef}>GTA VI <br /> Coming Soon</h1>
         </div>
       </section>
-      
-      <section className="intro">
+        <section className="intro" ref={introRef}>
         <div className="summary">
           <h2>Vice City, USA.</h2>
           <p>
