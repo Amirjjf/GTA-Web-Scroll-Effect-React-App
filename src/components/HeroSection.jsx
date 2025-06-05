@@ -1,207 +1,220 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { logoData } from './logo.js';
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
 import './HeroSection.css';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const HeroSection = () => {
-  const containerRef = useRef(null);
+  const heroRef = useRef(null);
+  const heroImgContainerRef = useRef(null);
+  const heroImgLogoRef = useRef(null);
+  const heroImgCopyRef = useRef(null);
+  const fadeOverlayRef = useRef(null);
+  const svgOverlayRef = useRef(null);
+  const overlayCopyRef = useRef(null);
+  const logoMaskRef = useRef(null);
+  const lenisRef = useRef(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-
-    // First step
-    gsap.from(".hero-main-container", {
-      scale: 1.45,
-      duration: 2.8,
-      ease: "power3.out",
+    const lenis = new Lenis({
+      duration: 0.8, 
+      easing: "easeInOutQuad", 
+      smoothWheel: true,
+      smoothTouch: true,
+      touchMultiplier: 2, 
     });
+    
+    lenisRef.current = lenis;
+    
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
 
-    gsap.to(".overlay", {
-      opacity: 0,
-      duration: 1.2,
-      ease: "power3.out",
-      onComplete: () => {
-        if (document.body) {
-          document.body.style.overflow = "visible";
-          document.body.style.overflowX = "hidden";
+    const heroImgContainer = heroImgContainerRef.current;
+    const heroImgLogo = heroImgLogoRef.current;
+    const heroImgCopy = heroImgCopyRef.current;
+    const fadeOverlay = fadeOverlayRef.current;
+    const svgOverlay = svgOverlayRef.current;
+    const overlayCopy = overlayCopyRef.current;
+
+    const initialOverlayScale = 350;
+    const logoMask = logoMaskRef.current;
+    logoMask.setAttribute("d", logoData);
+
+    function updateLogoPosition() {
+      const svgEl = svgOverlay.querySelector('svg');
+      if (!svgEl) return;
+
+      const vb = svgEl.viewBox.baseVal;
+      if (!vb || vb.width === 0 || vb.height === 0) return;
+
+      const vbWidth = vb.width;
+      const vbHeight = vb.height;
+
+      // Center point in viewBox coords (through letter A)
+      const fixedCenterX = vbWidth / 2;
+      const fixedCenterY = vbHeight * 0.12;
+
+      const logoBoundingBox = logoMask.getBBox();
+      if (!logoBoundingBox || logoBoundingBox.width === 0 || logoBoundingBox.height === 0) {
+          logoMask.removeAttribute("transform");
+          return;
+      }
+
+      // Mask target size in viewBox units (original logic)
+      const targetWidth = Math.min(200, vbWidth * 0.2);
+      const targetHeight = Math.min(150, vbHeight * 0.15);
+
+      const horizontalScaleRatio = targetWidth / logoBoundingBox.width;
+      const verticalScaleRatio = targetHeight / logoBoundingBox.height;
+      
+      let logoScaleFactor = Math.min(horizontalScaleRatio, verticalScaleRatio);
+
+      if (!isFinite(logoScaleFactor) || logoScaleFactor < 0) {
+          logoScaleFactor = 0; 
+      }
+
+      const logoCenterX = (logoBoundingBox.x + logoBoundingBox.width / 2) * logoScaleFactor;
+      const logoCenterY = (logoBoundingBox.y + logoBoundingBox.height / 2) * logoScaleFactor;
+      const horizontalPosition = fixedCenterX - logoCenterX;
+      const verticalPosition = fixedCenterY - logoCenterY;
+
+      logoMask.setAttribute(
+        "transform",
+        `translate(${horizontalPosition}, ${verticalPosition}) scale(${logoScaleFactor})`
+      );
+    }
+
+    updateLogoPosition();
+    window.addEventListener('resize', updateLogoPosition);
+
+    ScrollTrigger.create({
+      trigger: heroRef.current,
+      start: "top top",
+      end: `${window.innerHeight * 5}px`,
+      pin: true,
+      pinSpacing: true,
+      scrub: 1,
+      onUpdate: (self) => {
+        const scrollProgress = self.progress;
+        const fadeOpacity = 1 - scrollProgress * (1 / 0.15);
+
+        if (scrollProgress < 0.15) {
+          gsap.set([heroImgLogo, heroImgCopy], {
+            opacity: fadeOpacity,
+          });
+        } else {
+          gsap.set([heroImgLogo, heroImgCopy], {
+            opacity: 0,
+          });
+        }
+
+        if (scrollProgress < 0.85) {
+          const normalizedProgress = scrollProgress * (1 / 0.85);
+          const heroImgContainerScale = 1.5 - 0.5 * normalizedProgress;
+          const overlayScale =
+            initialOverlayScale *
+            Math.pow(1 / initialOverlayScale, normalizedProgress);
+          let fadeoverlayOpacity = 0;
+
+          gsap.set(heroImgContainer, {
+            scale: heroImgContainerScale,
+          });
+
+          gsap.set(svgOverlay, {
+            scale: overlayScale,
+          });
+
+          if (scrollProgress > 0.25) {
+            fadeoverlayOpacity = Math.min(1, (scrollProgress - 0.25) * (1 / 0.4));
+          }
+
+          gsap.set(fadeOverlay, {
+            opacity: fadeoverlayOpacity,
+          });
+        }
+
+        if (scrollProgress > 0.6 && scrollProgress < 0.85) {
+          const overlayCopyRevealProgress = (scrollProgress - 0.6) * (1 / 0.25);
+          const overlayCopyScale = 1.25 - 0.25 * overlayCopyRevealProgress;
+
+          overlayCopy.style.background = 'linear-gradient(to bottom right,rgb(255, 55, 162) 0%,rgb(254, 105, 160) 33%,rgb(255, 191, 165) 66%,rgb(251, 223, 175) 100%)';
+          overlayCopy.style.backgroundClip = 'text';
+          overlayCopy.style.webkitTextFillColor = 'transparent'; // Retain compatibility for text fill
+
+          gsap.set(overlayCopy, {
+            scale: overlayCopyScale,
+            opacity: overlayCopyRevealProgress,
+          });
+        } else if (scrollProgress <= 0.6) {
+          gsap.set(overlayCopy, {
+            opacity: 0,
+          });
         }
       },
     });
 
-    // Scroll Indicator
-    const scrollIndicator = document.querySelector(".scroll-indicator");
-    if (scrollIndicator) {
-      const bounceTimeline = gsap.timeline({
-        repeat: -1,
-        yoyo: true,
-      });
-
-      bounceTimeline.to(scrollIndicator, {
-        y: 20,
-        opacity: 0.6,
-        duration: 0.8,
-        ease: "power1.inOut",
-      });
-    }
-
-    // Create a timeline for better control
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: container,
-        scrub: 2,
-        pin: true,
-        start: "top top",
-        end: "+=2000",
-        ease: "none",
-      },
-    });
-
-    // Need to ensure that the scale is like this otherwise some flicks happens
-    tl.set(".hero-main-container", {
-      scale: 1.25,
-    });
-
-    tl.to(".hero-main-container", {
-      scale: 1,
-      duration: 1,
-    });
-
-    tl.to(
-      ".hero-main-logo",
-      {
-        opacity: 0,
-        duration: 0.5,
-      },
-      "<" // starts at the same time of previous animation
-    );
-
-    tl.to(
-      ".hero-main-image",
-      {
-        opacity: 0,
-        duration: 0.9,
-      },
-      "<+=0.5"
-    );
-
-    tl.to(
-      ".hero-main-container",
-      {
-        backgroundSize: "28vh",
-        duration: 1.5,
-      },
-      "<+=0.2"
-    );
-
-    tl.fromTo(
-      ".hero-text",
-      {
-        backgroundImage: `radial-gradient( circle at 50% 200vh, rgba(255, 214, 135, 0) 0, rgba(157, 47, 106, 0.5) 90vh, rgba(157, 47, 106, 0.8) 120vh, rgba(32, 31, 66, 0) 150vh )`,
-      },
-      {
-        backgroundImage: `radial-gradient(circle at 50% 3.9575vh, rgb(255, 213, 133) 0vh, rgb(247, 77, 82) 50.011vh, rgb(145, 42, 105) 90.0183vh, rgba(32, 31, 66, 0) 140.599vh)`,
-        duration: 3,
-      },
-      "<1.2" // starts 1.2 seconds before the previous animation
-    );
-
-    // logo purple
-    tl.fromTo(
-      ".hero-text-logo",
-
-      {
-        opacity: 0,
-        maskImage: `radial-gradient(circle at 50% 145.835%, rgb(0, 0, 0) 36.11%, rgba(0, 0, 0, 0) 68.055%)`,
-      },
-      {
-        opacity: 1,
-        maskImage: `radial-gradient( circle at 50% 105.594%, rgb(0, 0, 0) 62.9372%, rgba(0, 0, 0, 0) 81.4686% )`,
-        duration: 3,
-      },
-      "<0.2"
-    );
-
-    tl.set(".hero-main-container", { opacity: 0 });
-
-    tl.to(".hero-1-container", { scale: 0.85, duration: 3 }, "<-=3");
-
-    tl.set(
-      ".hero-1-container",
-      {
-        maskImage: `radial-gradient(circle at 50% 16.1137vh, rgb(0, 0, 0) 96.1949vh, rgba(0, 0, 0, 0) 112.065vh)`,
-      },
-      "<+=2.1"
-    );
-
-    tl.to(
-      ".hero-1-container",
-      {
-        maskImage: `radial-gradient(circle at 50% -40vh, rgb(0, 0, 0) 0vh, rgba(0, 0, 0, 0) 80vh)`,
-        duration: 2,
-      },
-      "<+=0.2" // Start 0.2 seconds after the mask is set
-    );
-
-    tl.to(
-      ".hero-text-logo",
-      {
-        opacity: 0,
-        duration: 2,
-      },
-      "<1.5"
-    );
-
-    tl.set(".hero-1-container", { opacity: 0 });
-    tl.set(".hero-2-container", { visibility: "visible" });
-
-    tl.to(".hero-2-container", { opacity: 1, duration: 3 }, "<+=0.2");
-
-    tl.fromTo(
-      ".hero-2-container",
-      {
-        backgroundImage: `radial-gradient( circle at 50% 200vh, rgba(255, 214, 135, 0) 0, rgba(157, 47, 106, 0.5) 90vh, rgba(157, 47, 106, 0.8) 120vh, rgba(32, 31, 66, 0) 150vh )`,
-      },
-      {
-        backgroundImage: `radial-gradient(circle at 50% 3.9575vh, rgb(255, 213, 133) 0vh, rgb(247, 77, 82) 50.011vh, rgb(145, 42, 105) 90.0183vh, rgba(32, 31, 66, 0) 140.599vh)`,
-        duration: 3,
-      },
-      "<1.2" // starts 1.2 seconds before the previous animation
-    );
-    
     return () => {
-      // Kill ScrollTrigger instances
+      window.removeEventListener('resize', updateLogoPosition);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      // Kill GSAP tweens and timelines
-      gsap.globalTimeline.clear(); 
+      gsap.ticker.remove((time) => {
+        lenis.raf(time * 1000);
+      });
+      lenis.destroy();
     };
   }, []);
 
   return (
-    <div className="container" ref={containerRef}>
-      <div className="overlay"></div>
-      <div className="hero-1-container">
-        <div className="hero-main-container">
-          <img className="hero-main-image" draggable="false" src="/Background.jpg" alt="gta logo" />
-        </div>
-        <div className="hero-text-logo-container">
-          <div>
-            <h3 className="hero-text"> Coming<br /> May 26<br /> 2026 </h3>
+    <>
+      <section className="hero" ref={heroRef}>
+        <div className="hero-img-container" ref={heroImgContainerRef}>
+          <img src="/BackgroundLarge.jpg" alt="Background" />
+
+          <div className="hero-img-logo" ref={heroImgLogoRef}>
+            <img src="/logo.svg" alt="logo" />
+          </div>
+
+          <img src="/CharactersLarge.png" id="Characters" alt="Characters" />
+
+          <div className="hero-img-copy" ref={heroImgCopyRef}>
+            <p>Scroll down to reveal</p>
           </div>
         </div>
-      </div>
-      <div className="hero-2-container">
-        <h3>Vice City, USA.</h3>
-        <p> Jason and Lucia have always known the deck is stacked against them. But when an easy score goes wrong, they find themselves on the darkest side of the sunniest place in America, in the middle of a criminal conspiracy stretching across the state of Leonida — forced to rely on each other more than ever if they want to make it out alive. </p>
-      </div>
-      {/* Scroll Indicator */}
-      <div className="scroll-indicator">
-        <svg width="34" height="14" viewBox="0 0 34 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" >
-          <path fillRule="evenodd" clipRule="evenodd" d="M33.5609 1.54346C34.0381 2.5875 33.6881 3.87821 32.7791 4.42633L17.0387 13.9181L1.48663 4.42115C0.580153 3.86761 0.235986 2.57483 0.717909 1.53365C1.19983 0.492464 2.32535 0.097152 3.23182 0.650692L17.0497 9.08858L31.051 0.64551C31.96 0.0973872 33.0837 0.499411 33.5609 1.54346Z" fill="currentColor" ></path>
-        </svg>
-      </div>
-    </div>
+
+        <div className="fade-overlay" ref={fadeOverlayRef}></div>
+
+        <div className="overlay" ref={svgOverlayRef}>
+          <svg width="100%" height="100%" viewBox="0 0 1184 666" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <mask id="logoRevealMask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1184" height="666">
+                <rect width="1184" height="666" fill="white"/>
+                <path id="logoMask" ref={logoMaskRef}></path> 
+              </mask>
+            </defs>
+            <rect width="100%" height="100%" fill="#111117" mask="url(#logoRevealMask)"/>
+          </svg>         
+        </div>
+
+        <div className="logo-container"></div>
+        <div className="overlay-copy">
+          <h1 ref={overlayCopyRef}>GTA VI <br /> Coming Soon</h1>
+        </div>
+      </section>
+      
+      <section className="intro">
+        <div className="summary">
+          <h2>Vice City, USA.</h2>
+          <p>
+            Jason and Lucia have always known the deck is stacked against them. But when an easy score goes wrong, they find themselves on the darkest side of the sunniest place in America, in the middle of a criminal conspiracy stretching across the state of Leonida — forced to rely on each other more than ever if they want to make it out alive.
+          </p>
+        </div>
+      </section>
+    </>
   );
 };
 
