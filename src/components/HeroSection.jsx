@@ -53,20 +53,14 @@ const HeroSection = () => {
       if (!vb || vb.width === 0 || vb.height === 0) return;
 
       const vbWidth = vb.width;
-      const vbHeight = vb.height;
-
-      // Center point in viewBox coords (through letter A)
-      const fixedCenterX = vbWidth / 2;
+      const vbHeight = vb.height;      const fixedCenterX = vbWidth / 2;
       const fixedCenterY = vbHeight * 0.12;
 
       const logoBoundingBox = logoMask.getBBox();
       if (!logoBoundingBox || logoBoundingBox.width === 0 || logoBoundingBox.height === 0) {
           logoMask.removeAttribute("transform");
           return;
-      }
-
-      // Mask target size in viewBox units (original logic)
-      const targetWidth = Math.min(200, vbWidth * 0.2);
+      }      const targetWidth = Math.min(200, vbWidth * 0.2);
       const targetHeight = Math.min(150, vbHeight * 0.15);
 
       const horizontalScaleRatio = targetWidth / logoBoundingBox.width;
@@ -134,43 +128,73 @@ const HeroSection = () => {
           gsap.set(fadeOverlay, {
             opacity: fadeoverlayOpacity,
           });
-        }
+        }        if (scrollProgress > 0.7 && scrollProgress < 0.85) {
+          const overlayCopyRevealProgress = Math.min(1, (scrollProgress - 0.7) * (1 / 0.1));
+          const overlayCopyScaleProgress = (scrollProgress - 0.7) * (1 / 0.15);
+          const overlayCopyScale = 1.25 - 0.25 * overlayCopyScaleProgress;          const createDynamicGradient = (progress) => {
+            const normalizedProgress = (progress - 0.7) / 0.15;
+            const baseColors = [
+              { r: 255, g: 230, b: 120 },
+              { r: 255, g: 215, b: 0 },
+              { r: 255, g: 200, b: 50 },
+              { r: 255, g: 165, b: 70 },
+              { r: 255, g: 140, b: 105 },
+              { r: 255, g: 69, b: 140 },
+              { r: 255, g: 20, b: 147 },
+              { r: 219, g: 39, b: 119 }
+            ];            
+            const movement = normalizedProgress * 40;
+            const angle = 45 + (normalizedProgress * 90);
+            
+            const colorShiftFactor = normalizedProgress * 1.5;
+            
+            const shiftColor = (color, factor) => {
+              const brightnessBoost = 1 + factor * 0.8;
+              const saturationBoost = 1 + factor * 0.5;
+              
+              return {
+                r: Math.min(255, Math.round(color.r * brightnessBoost)),
+                g: Math.min(255, Math.round(color.g * saturationBoost)),
+                b: Math.min(255, Math.round(color.b * brightnessBoost))
+              };            };
+            
+            const shiftedColors = baseColors.map(color => shiftColor(color, colorShiftFactor));
+            return `linear-gradient(${angle}deg,
+              rgb(${shiftedColors[0].r}, ${shiftedColors[0].g}, ${shiftedColors[0].b}) ${-movement + 0}%, 
+              rgb(${shiftedColors[1].r}, ${shiftedColors[1].g}, ${shiftedColors[1].b}) ${-movement + 12}%, 
+              rgb(${shiftedColors[2].r}, ${shiftedColors[2].g}, ${shiftedColors[2].b}) ${-movement + 24}%, 
+              rgb(${shiftedColors[3].r}, ${shiftedColors[3].g}, ${shiftedColors[3].b}) ${-movement + 36}%, 
+              rgb(${shiftedColors[4].r}, ${shiftedColors[4].g}, ${shiftedColors[4].b}) ${-movement + 48}%, 
+              rgb(${shiftedColors[5].r}, ${shiftedColors[5].g}, ${shiftedColors[5].b}) ${-movement + 60}%, 
+              rgb(${shiftedColors[6].r}, ${shiftedColors[6].g}, ${shiftedColors[6].b}) ${-movement + 72}%, 
+              rgb(${shiftedColors[7].r}, ${shiftedColors[7].g}, ${shiftedColors[7].b}) ${-movement + 84}%, 
+              rgb(${shiftedColors[0].r}, ${shiftedColors[0].g}, ${shiftedColors[0].b}) ${-movement + 96}%, 
+              rgb(${shiftedColors[1].r}, ${shiftedColors[1].g}, ${shiftedColors[1].b}) ${-movement + 108}%, 
+              rgb(${shiftedColors[2].r}, ${shiftedColors[2].g}, ${shiftedColors[2].b}) ${-movement + 120}%)`;
+          };
 
-        if (scrollProgress > 0.6 && scrollProgress < 0.85) {
-          const overlayCopyRevealProgress = (scrollProgress - 0.6) * (1 / 0.25);
-          const overlayCopyScale = 1.25 - 0.25 * overlayCopyRevealProgress;
-
-          overlayCopy.style.background = 'linear-gradient(to bottom right,rgb(255, 55, 162) 0%,rgb(254, 105, 160) 33%,rgb(255, 191, 165) 66%,rgb(251, 223, 175) 100%)';
+          overlayCopy.style.background = createDynamicGradient(scrollProgress);
           overlayCopy.style.backgroundClip = 'text';
-          overlayCopy.style.webkitTextFillColor = 'transparent';
-
-          gsap.set(overlayCopy, {
+          overlayCopy.style.webkitTextFillColor = 'transparent';          gsap.set(overlayCopy, {
             scale: overlayCopyScale,
             opacity: overlayCopyRevealProgress,
-          });
-        } else if (scrollProgress <= 0.6) {
+          });} else if (scrollProgress <= 0.7) {
           gsap.set(overlayCopy, {
             opacity: 0,
           });
-        }
-
-        // Fade out hero section and fade in intro section at the end
-        if (scrollProgress > 0.85) {
-          const fadeOutProgress = (scrollProgress - 0.85) * (1 / 0.15); // Last 15% of scroll
+        }        if (scrollProgress > 0.85) {
+          const fadeOutProgress = (scrollProgress - 0.85) * (1 / 0.15);
           const heroOpacity = 1 - fadeOutProgress;
           const introOpacity = fadeOutProgress;
 
-          // Fade out all hero elements
           gsap.set([heroImgContainer, svgOverlay, overlayCopy, fadeOverlay], {
             opacity: heroOpacity,
           });
 
-          // Fade in intro section
           gsap.set(introRef.current, {
             opacity: introOpacity,
           });
         } else {
-          // Ensure intro is hidden when not in fade range
           gsap.set(introRef.current, {
             opacity: 0,
           });
