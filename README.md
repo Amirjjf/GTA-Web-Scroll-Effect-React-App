@@ -1,12 +1,35 @@
-# React + Vite
+# 🎭 GTA VI Mask Effect Replica
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project replicates the scroll-based SVG mask animation from the official GTA VI website. It uses **GSAP**, **ScrollTrigger**, and **Lenis** for smooth and dynamic visual effects tied to scroll position.
 
-Currently, two official plugins are available:
+> **Disclaimer:** I am not affiliated with Rockstar Games. This project is fan-made and created just for fun.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
+- Scroll-driven SVG mask animation
+- Smooth scrolling with Lenis
+- Responsive and minimal setup
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
+- HTML / CSS / JavaScript
+- GSAP + ScrollTrigger
+- Lenis (scroll smoothing)
+- Vite (development server)
+- React
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📦 Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/GTA-Web-Scroll-Effect-React-App.git
+   cd gta6-mask-effect
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
