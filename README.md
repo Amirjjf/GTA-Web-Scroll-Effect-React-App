@@ -21,7 +21,7 @@ This project replicates the scroll-based SVG mask animation from the official GT
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/GTA-Web-Scroll-Effect-React-App.git
-   cd gta6-mask-effect
+   cd GTA-Web-Scroll-Effect-React-App
    ```
 
 2. Install dependencies:
