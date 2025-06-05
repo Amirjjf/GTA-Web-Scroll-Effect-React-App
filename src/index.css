@@ -15,3 +15,27 @@ body {
   background-color: #111117;
   overflow-x: hidden;
 }
+
+/* Dark scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #353535;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d0d0d0;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #c0c0c0 #353535;
+}
