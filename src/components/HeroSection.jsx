@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { logoData } from "./logo.js";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,8 +18,8 @@ const HeroSection = () => {
   const overlayCopyRef = useRef(null);
   const logoMaskRef = useRef(null);
   const lenisRef = useRef(null);
-  const introRef = useRef(null);
   const blackTransitionRef = useRef(null);
+  const [introScrollProgress, setIntroScrollProgress] = useState(0);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -106,6 +106,8 @@ const HeroSection = () => {
       scrub: 1,
       onUpdate: (self) => {
         const scrollProgress = self.progress;
+        setIntroScrollProgress(scrollProgress); // Pass progress to IntroSection
+
         const fadeOpacity = 1 - scrollProgress * (1 / 0.15);
 
         if (scrollProgress < 0.15) {
@@ -271,34 +273,10 @@ const HeroSection = () => {
           gsap.set(overlayCopy, {
             opacity: Math.min(1, Math.max(0, textOverlayOpacity)),
           });
-          let introSectionOpacity = 0;
-          const introSectionFadeStartScroll = 0.92;
-          if (scrollProgress > introSectionFadeStartScroll) {
-            const fadeProgress =
-              (scrollProgress - introSectionFadeStartScroll) /
-              (1.0 - introSectionFadeStartScroll);
-
-            introSectionOpacity = Math.pow(fadeProgress, 2);
-          }
-          gsap.set(introRef.current, {
-            opacity: Math.min(1, Math.max(0, introSectionOpacity)),
-          });
-
-          if (introSectionOpacity > 0.05 && introRef.current) {
-            introRef.current.classList.add("active");
-          } else if (introRef.current) {
-            introRef.current.classList.remove("active");
-          }
         } else {
           gsap.set(blackTransition, {
             opacity: 0,
           });
-          gsap.set(introRef.current, {
-            opacity: 0,
-          });
-          if (introRef.current) {
-            introRef.current.classList.remove("active");
-          }
         }
       },
     });
@@ -373,25 +351,8 @@ const HeroSection = () => {
           </h1>
         </div>
       </section>{" "}
-      <IntroSection ref={introRef} />
-      <section className="content-section section-two">
-        <div className="section-content">
-          <h2>Section Two</h2>
-          <p>Content for section two will be added here...</p>
-        </div>
-      </section>
-      <section className="content-section section-three">
-        <div className="section-content">
-          <h2>Section Three</h2>
-          <p>Content for section three will be added here...</p>
-        </div>
-      </section>
-      <section className="content-section section-four">
-        <div className="section-content">
-          <h2>Section Four</h2>
-          <p>Content for section four will be added here...</p>
-        </div>
-      </section>
+      <IntroSection scrollProgress={introScrollProgress} />
+
     </>
   );
 };

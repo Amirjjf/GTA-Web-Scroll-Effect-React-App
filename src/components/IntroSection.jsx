@@ -1,9 +1,39 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 import "./IntroSection.css";
 
-const IntroSection = React.forwardRef((props, ref) => {
+const IntroSection = React.forwardRef(({ scrollProgress }, ref) => {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const introSection = sectionRef.current;
+    let introSectionOpacity = 0;
+    const introSectionFadeStartScroll = 0.92;
+    if (scrollProgress > introSectionFadeStartScroll) {
+      const fadeProgress =
+        (scrollProgress - introSectionFadeStartScroll) /
+        (1.0 - introSectionFadeStartScroll);
+      introSectionOpacity = Math.pow(fadeProgress, 2);
+    }
+    gsap.set(introSection, {
+      opacity: Math.min(1, Math.max(0, introSectionOpacity)),
+    });
+    if (introSectionOpacity > 0.05 && introSection) {
+      introSection.classList.add("active");
+    } else if (introSection) {
+      introSection.classList.remove("active");
+    }
+  }, [scrollProgress]);
+
   return (
-    <section className="intro" ref={ref}>
+    <section
+      className="intro"
+      ref={(el) => {
+        sectionRef.current = el;
+        if (typeof ref === "function") ref(el);
+        else if (ref) ref.current = el;
+      }}
+    >
       <div className="summary">
         <h2>Vice City, USA.</h2>
         <p>
