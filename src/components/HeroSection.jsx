@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "./HeroSection.css";
+import IntroSection from "./IntroSection";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,7 +15,8 @@ const HeroSection = () => {
   const heroImgCopyRef = useRef(null);
   const fadeOverlayRef = useRef(null);
   const svgOverlayRef = useRef(null);
-  const overlayCopyRef = useRef(null);  const logoMaskRef = useRef(null);
+  const overlayCopyRef = useRef(null);
+  const logoMaskRef = useRef(null);
   const lenisRef = useRef(null);
   const introRef = useRef(null);
   const blackTransitionRef = useRef(null);
@@ -37,7 +39,8 @@ const HeroSection = () => {
     gsap.ticker.lagSmoothing(0);
     const heroImgContainer = heroImgContainerRef.current;
     const heroImgLogo = heroImgLogoRef.current;
-    const heroImgCopy = heroImgCopyRef.current;    const fadeOverlay = fadeOverlayRef.current;
+    const heroImgCopy = heroImgCopyRef.current;
+    const fadeOverlay = fadeOverlayRef.current;
     const svgOverlay = svgOverlayRef.current;
     const overlayCopy = overlayCopyRef.current;
     const blackTransition = blackTransitionRef.current;
@@ -153,14 +156,14 @@ const HeroSection = () => {
           const createDynamicGradient = (progress) => {
             const normalizedProgress = (progress - 0.7) / 0.15;
             const baseColors = [
-              { r: 255, g: 230, b: 120 },
-              { r: 255, g: 215, b: 0 },
-              { r: 255, g: 200, b: 50 },
-              { r: 255, g: 165, b: 70 },
-              { r: 255, g: 140, b: 105 },
-              { r: 255, g: 69, b: 140 },
+              { r: 255, g: 68, b: 168 },
+              { r: 255, g: 119, b: 169 },
               { r: 255, g: 20, b: 147 },
-              { r: 219, g: 39, b: 119 },
+              { r: 255, g: 105, b: 180 },
+              { r: 255, g: 215, b: 0 },
+              { r: 255, g: 223, b: 0 },
+              { r: 255, g: 140, b: 0 },
+              { r: 255, g: 68, b: 168 },
             ];
             const movement = normalizedProgress * 40;
             const angle = 45 + normalizedProgress * 90;
@@ -228,14 +231,15 @@ const HeroSection = () => {
           gsap.set(overlayCopy, {
             opacity: 0,
           });
-        }        
+        }
         if (scrollProgress > 0.85) {
           const overallTransitionProgress = (scrollProgress - 0.85) / 0.15;
 
           let calculatedBlackOverlayOpacity = 0;
           const blackTransitionRampUpEndProgress = (0.92 - 0.85) / 0.15;
           if (overallTransitionProgress <= blackTransitionRampUpEndProgress) {
-            calculatedBlackOverlayOpacity = overallTransitionProgress / blackTransitionRampUpEndProgress;
+            calculatedBlackOverlayOpacity =
+              overallTransitionProgress / blackTransitionRampUpEndProgress;
           } else {
             calculatedBlackOverlayOpacity = 1;
           }
@@ -257,18 +261,23 @@ const HeroSection = () => {
           const textOverlayFadeStartScroll = 0.87;
 
           if (scrollProgress >= textOverlayFadeStartScroll) {
-            const textFadeNormalizedProgress = (scrollProgress - textOverlayFadeStartScroll) / (1.0 - textOverlayFadeStartScroll);
+            const textFadeNormalizedProgress =
+              (scrollProgress - textOverlayFadeStartScroll) /
+              (1.0 - textOverlayFadeStartScroll);
             textOverlayOpacity = 1 - Math.pow(textFadeNormalizedProgress, 5);
           } else if (scrollProgress > 0.85) {
             textOverlayOpacity = 1;
           }
           gsap.set(overlayCopy, {
             opacity: Math.min(1, Math.max(0, textOverlayOpacity)),
-          });          let introSectionOpacity = 0;
-          const introSectionFadeStartScroll = 0.93;
+          });
+          let introSectionOpacity = 0;
+          const introSectionFadeStartScroll = 0.92;
           if (scrollProgress > introSectionFadeStartScroll) {
-            const fadeProgress = (scrollProgress - introSectionFadeStartScroll) / (1.0 - introSectionFadeStartScroll);
-            // Apply a smoother easing curve for more gradual fade
+            const fadeProgress =
+              (scrollProgress - introSectionFadeStartScroll) /
+              (1.0 - introSectionFadeStartScroll);
+
             introSectionOpacity = Math.pow(fadeProgress, 2);
           }
           gsap.set(introRef.current, {
@@ -276,11 +285,10 @@ const HeroSection = () => {
           });
 
           if (introSectionOpacity > 0.05 && introRef.current) {
-            introRef.current.classList.add('active');
+            introRef.current.classList.add("active");
           } else if (introRef.current) {
-            introRef.current.classList.remove('active');
+            introRef.current.classList.remove("active");
           }
-
         } else {
           gsap.set(blackTransition, {
             opacity: 0,
@@ -289,7 +297,7 @@ const HeroSection = () => {
             opacity: 0,
           });
           if (introRef.current) {
-            introRef.current.classList.remove('active');
+            introRef.current.classList.remove("active");
           }
         }
       },
@@ -323,7 +331,10 @@ const HeroSection = () => {
         </div>
 
         <div className="fade-overlay" ref={fadeOverlayRef}></div>
-        <div className="black-transition-overlay" ref={blackTransitionRef}></div>
+        <div
+          className="black-transition-overlay"
+          ref={blackTransitionRef}
+        ></div>
 
         <div className="overlay" ref={svgOverlayRef}>
           <svg
@@ -361,34 +372,20 @@ const HeroSection = () => {
             GTA VI <br /> Coming Soon
           </h1>
         </div>
-      </section>      <section className="intro" ref={introRef}>
-        <div className="summary">
-          <h2>Vice City, USA.</h2>
-          <p>
-            Jason and Lucia have always known the deck is stacked against them.
-            But when an easy score goes wrong, they find themselves on the
-            darkest side of the sunniest place in America, in the middle of a
-            criminal conspiracy stretching across the state of Leonida — forced
-            to rely on each other more than ever if they want to make it out
-            alive.
-          </p>
-        </div>
-      </section>
-      
+      </section>{" "}
+      <IntroSection ref={introRef} />
       <section className="content-section section-two">
         <div className="section-content">
           <h2>Section Two</h2>
           <p>Content for section two will be added here...</p>
         </div>
       </section>
-      
       <section className="content-section section-three">
         <div className="section-content">
           <h2>Section Three</h2>
           <p>Content for section three will be added here...</p>
         </div>
       </section>
-      
       <section className="content-section section-four">
         <div className="section-content">
           <h2>Section Four</h2>
