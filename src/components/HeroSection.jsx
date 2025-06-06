@@ -228,14 +228,12 @@ const HeroSection = () => {
           gsap.set(overlayCopy, {
             opacity: 0,
           });
-        }        // MODIFIED BLOCK FOR scrollProgress > 0.85
-        // scrollProgress > 0.85: Transition from Hero to Intro
+        }        
         if (scrollProgress > 0.85) {
-          const overallTransitionProgress = (scrollProgress - 0.85) / 0.15; // Normalized: 0 to 1 as scrollProgress goes 0.85 to 1.0
+          const overallTransitionProgress = (scrollProgress - 0.85) / 0.15;
 
-          // 1. Black transition overlay: Fades in quickly to cover the hero section
           let calculatedBlackOverlayOpacity = 0;
-          const blackTransitionRampUpEndProgress = (0.87 - 0.85) / 0.15; // Ends when overallTransitionProgress is at this value
+          const blackTransitionRampUpEndProgress = (0.87 - 0.85) / 0.15;
           if (overallTransitionProgress <= blackTransitionRampUpEndProgress) {
             calculatedBlackOverlayOpacity = overallTransitionProgress / blackTransitionRampUpEndProgress;
           } else {
@@ -245,40 +243,29 @@ const HeroSection = () => {
             opacity: Math.min(1, Math.max(0, calculatedBlackOverlayOpacity)),
           });
 
-          // 2. Fade out general hero background elements (heroImgContainer, white fadeOverlay)
-          // These use a linear fade from 0.85 to 1.0
           const heroBackgroundElementsOpacity = 1 - overallTransitionProgress;
           gsap.set([heroImgContainer, fadeOverlay], {
             opacity: Math.min(1, Math.max(0, heroBackgroundElementsOpacity)),
           });
 
-          // 3. Slower fade for svgOverlay (Main Logo)
-          // Fades from scrollProgress 0.85 to 1.0, with opacity decreasing slowly initially
-          const svgLogoOpacity = 1 - Math.pow(overallTransitionProgress, 3); // Power > 1 makes fade slower
+          const svgLogoOpacity = 1 - Math.pow(overallTransitionProgress, 5);
           gsap.set(svgOverlay, {
             opacity: Math.min(1, Math.max(0, svgLogoOpacity)),
           });
 
-          // 4. Slower fade for overlayCopy (Text on hero)
-          // Starts fading from scrollProgress 0.87 to 1.0, with opacity decreasing slowly initially
-          let textOverlayOpacity = 1; // Default to fully visible
+          let textOverlayOpacity = 1;
           const textOverlayFadeStartScroll = 0.87;
 
           if (scrollProgress >= textOverlayFadeStartScroll) {
-            // Normalized progress for the text's own fade duration (0.87 to 1.0)
             const textFadeNormalizedProgress = (scrollProgress - textOverlayFadeStartScroll) / (1.0 - textOverlayFadeStartScroll);
-            textOverlayOpacity = 1 - Math.pow(textFadeNormalizedProgress, 3); // Power > 1 makes fade slower
+            textOverlayOpacity = 1 - Math.pow(textFadeNormalizedProgress, 5);
           } else if (scrollProgress > 0.85) {
-            // Between 0.85 and 0.87, text remains fully opaque
             textOverlayOpacity = 1;
           }
-          // Opacity for scrollProgress <= 0.85 is handled by earlier logic (it's 1 at 0.85)
           gsap.set(overlayCopy, {
             opacity: Math.min(1, Math.max(0, textOverlayOpacity)),
           });
 
-          // 5. Fade in intro section
-          // Starts fading in from scrollProgress 0.87, after black overlay is mostly opaque
           let introSectionOpacity = 0;
           const introSectionFadeStartScroll = 0.87;
           if (scrollProgress > introSectionFadeStartScroll) {
@@ -288,16 +275,13 @@ const HeroSection = () => {
             opacity: Math.min(1, Math.max(0, introSectionOpacity)),
           });
 
-          // 6. Add 'active' class to intro for potential CSS animations
           if (introSectionOpacity > 0.1 && introRef.current) {
             introRef.current.classList.add('active');
           } else if (introRef.current) {
             introRef.current.classList.remove('active');
           }
 
-        } else { // scrollProgress <= 0.85
-          // This 'else' correctly resets blackTransition and introRef.
-          // Other elements' opacities for scrollProgress <= 0.85 are handled by earlier parts of the onUpdate function.
+        } else {
           gsap.set(blackTransition, {
             opacity: 0,
           });
