@@ -233,7 +233,7 @@ const HeroSection = () => {
           const overallTransitionProgress = (scrollProgress - 0.85) / 0.15;
 
           let calculatedBlackOverlayOpacity = 0;
-          const blackTransitionRampUpEndProgress = (0.87 - 0.85) / 0.15;
+          const blackTransitionRampUpEndProgress = (0.92 - 0.85) / 0.15;
           if (overallTransitionProgress <= blackTransitionRampUpEndProgress) {
             calculatedBlackOverlayOpacity = overallTransitionProgress / blackTransitionRampUpEndProgress;
           } else {
@@ -264,18 +264,18 @@ const HeroSection = () => {
           }
           gsap.set(overlayCopy, {
             opacity: Math.min(1, Math.max(0, textOverlayOpacity)),
-          });
-
-          let introSectionOpacity = 0;
-          const introSectionFadeStartScroll = 0.87;
+          });          let introSectionOpacity = 0;
+          const introSectionFadeStartScroll = 0.93;
           if (scrollProgress > introSectionFadeStartScroll) {
-            introSectionOpacity = (scrollProgress - introSectionFadeStartScroll) / (1.0 - introSectionFadeStartScroll);
+            const fadeProgress = (scrollProgress - introSectionFadeStartScroll) / (1.0 - introSectionFadeStartScroll);
+            // Apply a smoother easing curve for more gradual fade
+            introSectionOpacity = Math.pow(fadeProgress, 2);
           }
           gsap.set(introRef.current, {
             opacity: Math.min(1, Math.max(0, introSectionOpacity)),
           });
 
-          if (introSectionOpacity > 0.1 && introRef.current) {
+          if (introSectionOpacity > 0.05 && introRef.current) {
             introRef.current.classList.add('active');
           } else if (introRef.current) {
             introRef.current.classList.remove('active');
