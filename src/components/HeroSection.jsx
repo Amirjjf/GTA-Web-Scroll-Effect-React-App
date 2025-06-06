@@ -14,10 +14,10 @@ const HeroSection = () => {
   const heroImgCopyRef = useRef(null);
   const fadeOverlayRef = useRef(null);
   const svgOverlayRef = useRef(null);
-  const overlayCopyRef = useRef(null);
-  const logoMaskRef = useRef(null);
+  const overlayCopyRef = useRef(null);  const logoMaskRef = useRef(null);
   const lenisRef = useRef(null);
   const introRef = useRef(null);
+  const blackTransitionRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -37,10 +37,10 @@ const HeroSection = () => {
     gsap.ticker.lagSmoothing(0);
     const heroImgContainer = heroImgContainerRef.current;
     const heroImgLogo = heroImgLogoRef.current;
-    const heroImgCopy = heroImgCopyRef.current;
-    const fadeOverlay = fadeOverlayRef.current;
+    const heroImgCopy = heroImgCopyRef.current;    const fadeOverlay = fadeOverlayRef.current;
     const svgOverlay = svgOverlayRef.current;
     const overlayCopy = overlayCopyRef.current;
+    const blackTransition = blackTransitionRef.current;
 
     const initialOverlayScale = 350;
     const logoMask = logoMaskRef.current;
@@ -228,23 +228,72 @@ const HeroSection = () => {
           gsap.set(overlayCopy, {
             opacity: 0,
           });
-        }
+        }        // MODIFIED BLOCK FOR scrollProgress > 0.85
         if (scrollProgress > 0.85) {
-          const fadeOutProgress = (scrollProgress - 0.85) * (1 / 0.15);
-          const heroOpacity = 1 - fadeOutProgress;
-          const introOpacity = fadeOutProgress;
+          const overallTransitionProgress = (scrollProgress - 0.85) / 0.15; // 0 to 1 as scrollProgress goes 0.85 to 1.0
 
-          gsap.set([heroImgContainer, svgOverlay, overlayCopy, fadeOverlay], {
-            opacity: heroOpacity,
+          // Black transition overlay: make it opaque very quickly
+          let calculatedBlackOverlayOpacity = 0;
+          // Ramp up black overlay to full opacity between scroll 0.85 and 0.87
+          const blackTransitionRampUpEndProgressPoint = (0.87 - 0.85) / 0.15; 
+          if (overallTransitionProgress <= blackTransitionRampUpEndProgressPoint) {
+            calculatedBlackOverlayOpacity = overallTransitionProgress / blackTransitionRampUpEndProgressPoint;
+          } else {
+            calculatedBlackOverlayOpacity = 1;
+          }
+          gsap.set(blackTransition, {
+            opacity: Math.min(1, Math.max(0, calculatedBlackOverlayOpacity)),
           });
 
+          // Fade out hero elements (heroImgContainer, svgOverlay, fadeOverlay (white))
+          // These fade out over the whole 0.85 to 1.0 range, behind the black overlay.
+          const heroElementsOpacity = 1 - overallTransitionProgress;
+          gsap.set([heroImgContainer, svgOverlay, fadeOverlay], {
+            opacity: Math.min(1, Math.max(0, heroElementsOpacity)),
+          });
+
+          // Fade out overlayCopy (text) - maintains its original fade logic relative to this phase
+          // It's visible (opacity ~1) from scroll 0.85 up to logoFadeStart (0.87), then fades out by 1.0.
+          const logoFadeStart = 0.87; 
+          if (scrollProgress > logoFadeStart) {
+            const logoFadeProgress = (scrollProgress - logoFadeStart) / (1.0 - logoFadeStart); // Normalized 0-1 from logoFadeStart to 1.0
+            gsap.set(overlayCopy, {
+              opacity: Math.min(1, Math.max(0, 1 - logoFadeProgress)),
+            });
+          }
+          // If 0.85 < scrollProgress <= logoFadeStart, overlayCopy opacity is not set here,
+          // relying on its state from scrollProgress < 0.85 (where it became opacity ~1), which is correct.
+
+          // Fade in intro section
+          // Start fading in intro after black overlay is mostly opaque, e.g., from scroll 0.87 to 1.0
+          let introSectionOpacity = 0;
+          const introFadeStartScroll = 0.87; 
+          if (scrollProgress > introFadeStartScroll) {
+            introSectionOpacity = (scrollProgress - introFadeStartScroll) / (1.0 - introFadeStartScroll); // Normalized 0-1 from introFadeStartScroll to 1.0
+          }
           gsap.set(introRef.current, {
-            opacity: introOpacity,
+            opacity: Math.min(1, Math.max(0, introSectionOpacity)),
           });
-        } else {
+
+          // Add active class to intro
+          if (introSectionOpacity > 0.1 && introRef.current) {
+            introRef.current.classList.add('active');
+          } else if (introRef.current) {
+            introRef.current.classList.remove('active');
+          }
+
+        } else { // scrollProgress <= 0.85
+          // This 'else' correctly resets blackTransition and introRef.
+          // Other elements' opacities for scrollProgress <= 0.85 are handled by earlier parts of the onUpdate function.
+          gsap.set(blackTransition, {
+            opacity: 0,
+          });
           gsap.set(introRef.current, {
             opacity: 0,
           });
+          if (introRef.current) {
+            introRef.current.classList.remove('active');
+          }
         }
       },
     });
@@ -277,6 +326,7 @@ const HeroSection = () => {
         </div>
 
         <div className="fade-overlay" ref={fadeOverlayRef}></div>
+        <div className="black-transition-overlay" ref={blackTransitionRef}></div>
 
         <div className="overlay" ref={svgOverlayRef}>
           <svg
@@ -314,8 +364,7 @@ const HeroSection = () => {
             GTA VI <br /> Coming Soon
           </h1>
         </div>
-      </section>
-      <section className="intro" ref={introRef}>
+      </section>      <section className="intro" ref={introRef}>
         <div className="summary">
           <h2>Vice City, USA.</h2>
           <p>
@@ -326,6 +375,27 @@ const HeroSection = () => {
             to rely on each other more than ever if they want to make it out
             alive.
           </p>
+        </div>
+      </section>
+      
+      <section className="content-section section-two">
+        <div className="section-content">
+          <h2>Section Two</h2>
+          <p>Content for section two will be added here...</p>
+        </div>
+      </section>
+      
+      <section className="content-section section-three">
+        <div className="section-content">
+          <h2>Section Three</h2>
+          <p>Content for section three will be added here...</p>
+        </div>
+      </section>
+      
+      <section className="content-section section-four">
+        <div className="section-content">
+          <h2>Section Four</h2>
+          <p>Content for section four will be added here...</p>
         </div>
       </section>
     </>
