@@ -4,11 +4,14 @@ import "./IntroSection.css";
 
 const IntroSection = React.forwardRef(({ scrollProgress }, ref) => {
   const sectionRef = useRef(null);
+  const summaryRef = useRef(null);
 
   useEffect(() => {
     const introSection = sectionRef.current;
+    const summary = summaryRef.current;
+    // Make intro section last longer: fade out starts later, ends later
+    const introSectionFadeStartScroll = 0.96; // was 0.92
     let introSectionOpacity = 0;
-    const introSectionFadeStartScroll = 0.92;
     if (scrollProgress > introSectionFadeStartScroll) {
       const fadeProgress =
         (scrollProgress - introSectionFadeStartScroll) /
@@ -23,6 +26,22 @@ const IntroSection = React.forwardRef(({ scrollProgress }, ref) => {
     } else if (introSection) {
       introSection.classList.remove("active");
     }
+
+    // Animate summary: reveal from center outwards, scale down as we scroll
+    // summaryRevealProgress: 0 (hidden) to 1 (fully visible)
+    let summaryRevealProgress = 0;
+    if (introSectionOpacity > 0.05) {
+      summaryRevealProgress = Math.min(1, (introSectionOpacity - 0.05) / 0.95);
+    }
+    // Scale from 1.1 (start) to 0.92 (end)
+    const summaryScale = 1.1 - 0.18 * summaryRevealProgress;
+    // Use clip-path to reveal from center outwards
+    const clipRadius = 20 + 80 * summaryRevealProgress; // percent
+    gsap.set(summary, {
+      opacity: summaryRevealProgress,
+      scale: summaryScale,
+      clipPath: `circle(${clipRadius}% at 50% 50%)`,
+    });
   }, [scrollProgress]);
 
   return (
@@ -34,15 +53,21 @@ const IntroSection = React.forwardRef(({ scrollProgress }, ref) => {
         else if (ref) ref.current = el;
       }}
     >
-      <div className="summary">
+      <div className="summary" ref={summaryRef}>
         <h2>Vice City, USA.</h2>
         <p>
-          Jason and Lucia have always known the deck is stacked against them.
-          But when an easy score goes wrong, they find themselves on the
-          darkest side of the sunniest place in America, in the middle of a
-          criminal conspiracy stretching across the state of Leonida — forced
-          to rely on each other more than ever if they want to make it out
-          alive.
+          Jason and Lucia have always known the deck is stacked against them. But
+          when an easy score goes wrong, they find themselves on the darkest side
+          of the sunniest place in America, in the middle of a criminal
+          conspiracy stretching across the state of Leonida — forced to rely on
+          each other more than ever if they want to make it out alive.
+          <br />
+          <br />
+          Now, with every move watched and every ally a potential enemy, they
+          must navigate a world of betrayal, ambition, and shifting loyalties. As
+          the city pulses with danger and opportunity, Jason and Lucia are drawn
+          deeper into a game where survival means risking everything—and trusting
+          no one but each other.
         </p>
       </div>
     </section>

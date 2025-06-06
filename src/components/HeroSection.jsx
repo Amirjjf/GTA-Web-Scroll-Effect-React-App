@@ -352,6 +352,7 @@ const HeroSection = () => {
         </div>
       </section>{" "}
       <IntroSection scrollProgress={introScrollProgress} />
+      <section className="ThirdSection"></section>
 
     </>
   );
