@@ -1,0 +1,22 @@
+/* filepath: f:\LUT University\Metal Gear\frontend\src\components\LuciaVideo.css */
+.lucia-video-section {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  opacity: 0; /* Start fully transparent, GSAP will manage fade-in */
+  background-color: #000; /* Fallback background */
+}
+
+.lucia-video-section video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the entire section */
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Optimize for smooth playback */
+  will-change: transform; /* Hint browser for optimization */
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden; /* Optimize rendering */
+}

@@ -11,6 +11,8 @@ function LuciaVideo() {
     const rafRef = useRef(null);
     const containerRef = useRef(null);
     const canvasRef = useRef(null);
+    // Track the last drawn frame index for accurate debugger display
+    const [drawnFrame, setDrawnFrame] = useState(0);
 
     // Preload
     useEffect(() => {
@@ -38,6 +40,7 @@ function LuciaVideo() {
             // Clamp frame index to valid range
             let frameIdx = Math.round(currentFrameRef.current);
             frameIdx = Math.max(0, Math.min(images.length - 1, frameIdx));
+            setDrawnFrame(frameIdx); // Update state with the actual drawn frame
             const img = images[frameIdx];
             if (img && img.complete && img.naturalWidth > 0) {
                 ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -99,6 +102,23 @@ function LuciaVideo() {
 
     return (
         <div ref={containerRef} style={{ height: '300vh', position: 'relative' }}>
+            {/* Debugger overlay for current frame */}
+            <div style={{
+                position: 'fixed',
+                top: 10,
+                left: 10,
+                zIndex: 1000,
+                background: 'rgba(0,0,0,0.7)',
+                color: '#fff',
+                padding: '6px 14px',
+                borderRadius: '8px',
+                fontFamily: 'monospace',
+                fontSize: '1.1rem',
+                pointerEvents: 'none',
+                userSelect: 'none',
+            }}>
+                Frame: {drawnFrame + 1} / {FRAME_COUNT}
+            </div>
             <div style={{
                 position: 'sticky', top: 0, width: '100%', height: '100vh', background: '#000',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',

@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   background-color: #111117;
-  z-index: 10;
+  z-index: auto;
   opacity: 0;
 }
 
@@ -18,14 +18,14 @@
   max-width: 1200px;
   text-align: left;
   opacity: 0;
-  transform: translateY(30px) scale(1.1); /* initial scale for animation */
+  transform: scale(1.1); /* initial scale for animation */
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
   clip-path: circle(20% at 50% 50%); /* initial for center-outwards reveal */
 }
 
 .intro.active .summary {
   opacity: 1;
-  transform: translateY(0) scale(0.92); /* final scale for animation */
+  transform: scale(0.92); /* final scale for animation */
   clip-path: circle(100% at 50% 50%);
 }
 

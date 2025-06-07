@@ -10,7 +10,7 @@ const IntroSection = React.forwardRef(({ scrollProgress }, ref) => {
     const introSection = sectionRef.current;
     const summary = summaryRef.current;
     // Make intro section last longer: fade out starts later, ends later
-    const introSectionFadeStartScroll = 0.96; // was 0.92
+    const introSectionFadeStartScroll = 0.87; // changed from 0.96
     let introSectionOpacity = 0;
     if (scrollProgress > introSectionFadeStartScroll) {
       const fadeProgress =
@@ -61,13 +61,6 @@ const IntroSection = React.forwardRef(({ scrollProgress }, ref) => {
           of the sunniest place in America, in the middle of a criminal
           conspiracy stretching across the state of Leonida — forced to rely on
           each other more than ever if they want to make it out alive.
-          <br />
-          <br />
-          Now, with every move watched and every ally a potential enemy, they
-          must navigate a world of betrayal, ambition, and shifting loyalties. As
-          the city pulses with danger and opportunity, Jason and Lucia are drawn
-          deeper into a game where survival means risking everything—and trusting
-          no one but each other.
         </p>
       </div>
     </section>
