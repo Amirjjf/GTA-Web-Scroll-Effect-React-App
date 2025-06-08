@@ -19,7 +19,7 @@ const HeroSection = () => {
   const logoMaskRef = useRef(null);
   const lenisRef = useRef(null);
   const blackTransitionRef = useRef(null);
-  const [introScrollProgress, setIntroScrollProgress] = useState(0);
+  const [shouldShowIntro, setShouldShowIntro] = useState(false); // Changed from introScrollProgress
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -106,7 +106,7 @@ const HeroSection = () => {
       scrub: 1,
       onUpdate: (self) => {
         const scrollProgress = self.progress;
-        setIntroScrollProgress(scrollProgress); // Pass progress to IntroSection
+        setShouldShowIntro(scrollProgress > 0.85 && scrollProgress < 1.0); // Updated condition
 
         const fadeOpacity = 1 - scrollProgress * (1 / 0.15);
 
@@ -351,7 +351,7 @@ const HeroSection = () => {
           </h1>
         </div>
       </section>{" "}
-      <IntroSection scrollProgress={introScrollProgress} />
+      <IntroSection show={shouldShowIntro} /> {/* Changed prop name and value */}
 
     </>
   );

@@ -1,59 +1,81 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react"; // Added useState
 import { gsap } from "gsap";
 import "./IntroSection.css";
 
-const IntroSection = React.forwardRef(({ scrollProgress }, ref) => {
+const IntroSection = React.forwardRef(({ show }, ref) => {
   const sectionRef = useRef(null);
   const summaryRef = useRef(null);
+  const [isActive, setIsActive] = useState(false); // State to control 'active' class for CSS transitions
 
   useEffect(() => {
     const introSection = sectionRef.current;
     const summary = summaryRef.current;
-    // Make intro section last longer: fade out starts later, ends later
-    const introSectionFadeStartScroll = 0.87; // changed from 0.96
-    let introSectionOpacity = 0;
-    if (scrollProgress > introSectionFadeStartScroll) {
-      const fadeProgress =
-        (scrollProgress - introSectionFadeStartScroll) /
-        (1.0 - introSectionFadeStartScroll);
-      introSectionOpacity = Math.pow(fadeProgress, 2);
-    }
-    gsap.set(introSection, {
-      opacity: Math.min(1, Math.max(0, introSectionOpacity)),
-    });
-    if (introSectionOpacity > 0.05 && introSection) {
-      introSection.classList.add("active");
-    } else if (introSection) {
-      introSection.classList.remove("active");
-    }
 
-    // Animate summary: reveal from center outwards, scale down as we scroll
-    // summaryRevealProgress: 0 (hidden) to 1 (fully visible)
-    let summaryRevealProgress = 0;
-    if (introSectionOpacity > 0.05) {
-      summaryRevealProgress = Math.min(1, (introSectionOpacity - 0.05) / 0.95);
+    if (show) {
+      // Fade in IntroSection
+      gsap.to(introSection, {
+        opacity: 1,
+        duration: 0.8, // Duration for fade-in
+        onStart: () => {
+          if (introSection) introSection.style.pointerEvents = "auto"; // Make it interactive
+        },
+        onComplete: () => {
+          setIsActive(true); // Add active class for summary animation
+        },
+      });
+
+      // Animate summary: reveal from center outwards, scale down
+      // This will now be primarily controlled by the 'active' class in CSS,
+      // but we can still use GSAP for initial setup or more complex parts if needed.
+      // For simplicity, relying on CSS transition triggered by 'active' class.
+      // If direct GSAP control is preferred over CSS transitions for summary:
+      gsap.to(summary, {
+        opacity: 1,
+        scale: 0.92, // Final scale
+        clipPath: "circle(100% at 50% 50%)", // Final clip-path
+        duration: 0.8, // Duration for summary animation
+        ease: "easeOut",
+      });
+    } else {
+      // Fade out IntroSection
+      gsap.to(introSection, {
+        opacity: 0,
+        duration: 0.8, // Duration for fade-out
+        onStart: () => {
+          setIsActive(false); // Remove active class
+        },
+        onComplete: () => {
+          if (introSection) introSection.style.pointerEvents = "none"; // Make it non-interactive
+          // Reset summary styles if needed when hiding
+          gsap.set(summary, {
+            opacity: 0,
+            scale: 1.1, // Reset to initial scale
+            clipPath: "circle(20% at 50% 50%)", // Reset to initial clip-path
+          });
+        },
+      });
     }
-    // Scale from 1.1 (start) to 0.92 (end)
-    const summaryScale = 1.1 - 0.18 * summaryRevealProgress;
-    // Use clip-path to reveal from center outwards
-    const clipRadius = 20 + 80 * summaryRevealProgress; // percent
-    gsap.set(summary, {
-      opacity: summaryRevealProgress,
-      scale: summaryScale,
-      clipPath: `circle(${clipRadius}% at 50% 50%)`,
-    });
-  }, [scrollProgress]);
+  }, [show]); // Depend on the 'show' prop
 
   return (
     <section
-      className="intro"
+      className={`intro ${isActive ? "active" : ""}`} // Dynamically add 'active' class
       ref={(el) => {
         sectionRef.current = el;
         if (typeof ref === "function") ref(el);
         else if (ref) ref.current = el;
       }}
+      style={{ pointerEvents: "none", opacity: 0 }} // Initially hidden and non-interactive
     >
-      <div className="summary" ref={summaryRef}>
+      <div
+        className="summary"
+        ref={summaryRef}
+        style={{
+          opacity: 0,
+          transform: "scale(1.1)",
+          clipPath: "circle(20% at 50% 50%)", // Initial styles for GSAP
+        }}
+      >
         <h2>Vice City, USA.</h2>
         <p>
           Jason and Lucia have always known the deck is stacked against them. But
