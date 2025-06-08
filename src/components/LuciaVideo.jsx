@@ -63,30 +63,29 @@ function LuciaVideo() {
         const draw = () => {
             if (!canvasRef.current || images.length === 0) return;
             const ctx = canvasRef.current.getContext('2d');
-            
-            // Clamp frame index to valid range
             let frameIdx = Math.round(currentFrameRef.current);
             frameIdx = Math.max(0, Math.min(images.length - 1, frameIdx));
-            // setDrawnFrame(frameIdx); // Update state with the actual drawn frame
             const img = images[frameIdx];
-            // Check if image exists and is properly loaded
             if (img && img.complete && img.naturalWidth > 0) {
                 ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-                const ratio = Math.min(
-                    canvasRef.current.width / img.width,
-                    canvasRef.current.height / img.height
-                );
-                const w = img.width * ratio;
-                const h = img.height * ratio;
+                // --- COVER LOGIC: draw image to cover canvas ---
+                const canvasW = canvasRef.current.width;
+                const canvasH = canvasRef.current.height;
+                const imgW = img.width;
+                const imgH = img.height;
+                const scale = Math.max(canvasW / imgW, canvasH / imgH);
+                const drawW = imgW * scale;
+                const drawH = imgH * scale;
+                const offsetX = (canvasW - drawW) / 2;
+                const offsetY = (canvasH - drawH) / 2;
                 ctx.drawImage(
                     img,
-                    (canvasRef.current.width - w) / 2,
-                    (canvasRef.current.height - h) / 2,
-                    w,
-                    h
+                    offsetX,
+                    offsetY,
+                    drawW,
+                    drawH
                 );
             } else {
-                // If image isn't loaded, clear canvas or show loading state
                 ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             }
         };
