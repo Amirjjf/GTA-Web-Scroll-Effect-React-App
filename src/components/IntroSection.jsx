@@ -1,71 +1,78 @@
-import React, { useEffect, useRef, useState } from "react"; // Added useState
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./IntroSection.css";
 
-const IntroSection = React.forwardRef(({ show }, ref) => {
+gsap.registerPlugin(ScrollTrigger);
+
+const IntroSection = () => {
   const sectionRef = useRef(null);
   const summaryRef = useRef(null);
-  const [isActive, setIsActive] = useState(false); // State to control 'active' class for CSS transitions
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     const introSection = sectionRef.current;
     const summary = summaryRef.current;
 
-    if (show) {
-      // Fade in IntroSection
-      gsap.to(introSection, {
-        opacity: 1,
-        duration: 0.8, // Duration for fade-in
-        onStart: () => {
-          if (introSection) introSection.style.pointerEvents = "auto"; // Make it interactive
-        },
-        onComplete: () => {
-          setIsActive(true); // Add active class for summary animation
-        },
-      });
+    if (!introSection || !summary) return;
 
-      // Animate summary: reveal from center outwards, scale down
-      // This will now be primarily controlled by the 'active' class in CSS,
-      // but we can still use GSAP for initial setup or more complex parts if needed.
-      // For simplicity, relying on CSS transition triggered by 'active' class.
-      // If direct GSAP control is preferred over CSS transitions for summary:
-      gsap.to(summary, {
-        opacity: 1,
-        scale: 0.92, // Final scale
-        clipPath: "circle(100% at 50% 50%)", // Final clip-path
-        duration: 0.8, // Duration for summary animation
-        ease: "easeOut",
-      });
-    } else {
-      // Fade out IntroSection
-      gsap.to(introSection, {
-        opacity: 0,
-        duration: 0.8, // Duration for fade-out
-        onStart: () => {
-          setIsActive(false); // Remove active class
-        },
-        onComplete: () => {
-          if (introSection) introSection.style.pointerEvents = "none"; // Make it non-interactive
-          // Reset summary styles if needed when hiding
-          gsap.set(summary, {
-            opacity: 0,
-            scale: 1.1, // Reset to initial scale
-            clipPath: "circle(20% at 50% 50%)", // Reset to initial clip-path
-          });
-        },
-      });
-    }
-  }, [show]); // Depend on the 'show' prop
+    // Create ScrollTrigger for the IntroSection
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: introSection,
+      start: "top center",
+      end: "bottom center",
+      scrub: 1,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        
+        // Fade in the section
+        gsap.set(introSection, {
+          opacity: progress,
+        });
+        
+        // Control the active state for CSS transitions
+        if (progress > 0.5 && !isActive) {
+          setIsActive(true);
+        } else if (progress <= 0.5 && isActive) {
+          setIsActive(false);
+        }
+
+        // Animate summary based on progress
+        gsap.set(summary, {
+          opacity: progress,
+          scale: 1.1 - (progress * 0.18), // From 1.1 to 0.92
+          clipPath: `circle(${20 + (progress * 80)}% at 50% 50%)`, // From 20% to 100%
+        });
+      },
+      onEnter: () => {
+        if (introSection) introSection.style.pointerEvents = "auto";
+      },
+      onLeave: () => {
+        if (introSection) introSection.style.pointerEvents = "none";
+      },
+      onEnterBack: () => {
+        if (introSection) introSection.style.pointerEvents = "auto";
+      },
+      onLeaveBack: () => {
+        if (introSection) introSection.style.pointerEvents = "none";
+      },
+    });
+
+    return () => {
+      scrollTrigger.kill();
+    };
+  }, [isActive]);
 
   return (
     <section
-      className={`intro ${isActive ? "active" : ""}`} // Dynamically add 'active' class
-      ref={(el) => {
-        sectionRef.current = el;
-        if (typeof ref === "function") ref(el);
-        else if (ref) ref.current = el;
+      className={`intro ${isActive ? "active" : ""}`}
+      ref={sectionRef}
+      style={{ 
+        pointerEvents: "none", 
+        opacity: 0,
+        height: "100vh",
+        position: "relative"
       }}
-      style={{ pointerEvents: "none", opacity: 0 }} // Initially hidden and non-interactive
     >
       <div
         className="summary"
@@ -73,7 +80,7 @@ const IntroSection = React.forwardRef(({ show }, ref) => {
         style={{
           opacity: 0,
           transform: "scale(1.1)",
-          clipPath: "circle(20% at 50% 50%)", // Initial styles for GSAP
+          clipPath: "circle(20% at 50% 50%)",
         }}
       >
         <h2>Vice City, USA.</h2>
@@ -87,6 +94,6 @@ const IntroSection = React.forwardRef(({ show }, ref) => {
       </div>
     </section>
   );
-});
+};
 
 export default IntroSection;

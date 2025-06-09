@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { logoData } from "./logo.js";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "./HeroSection.css";
-import IntroSection from "./IntroSection";
-import LuciaVideo from "./LuciaVideo";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,10 +15,8 @@ const HeroSection = () => {
   const fadeOverlayRef = useRef(null);
   const svgOverlayRef = useRef(null);
   const overlayCopyRef = useRef(null);
-  const logoMaskRef = useRef(null);
-  const lenisRef = useRef(null);  const blackTransitionRef = useRef(null);  const [shouldShowIntro, setShouldShowIntro] = useState(false); // Changed from introScrollProgress
-  const [shouldShowVideo, setShouldShowVideo] = useState(false);
-  const [videoShouldBeBlurred, setVideoShouldBeBlurred] = useState(true);
+  const logoMaskRef = useRef(null);  const lenisRef = useRef(null);
+  const blackTransitionRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -103,14 +99,9 @@ const HeroSection = () => {
       start: "top top",
       end: `${window.innerHeight * 5}px`,
       pin: true,
-      pinSpacing: true,
-      scrub: 1,      onUpdate: (self) => {
+      pinSpacing: true,      scrub: 1,
+      onUpdate: (self) => {
         const scrollProgress = self.progress;
-        setShouldShowIntro(scrollProgress > 0.85 && scrollProgress < 1.0); // Updated condition
-        
-        // Control video visibility and blur
-        setShouldShowVideo(scrollProgress > 0.85);
-        setVideoShouldBeBlurred(scrollProgress < 0.95);
 
         const fadeOpacity = 1 - scrollProgress * (1 / 0.15);
 
@@ -352,10 +343,8 @@ const HeroSection = () => {
         <div className="overlay-copy">
           <h1 ref={overlayCopyRef}>
             GTA VI <br /> Coming Soon
-          </h1>
-        </div>      </section>{" "}
-      <IntroSection show={shouldShowIntro} /> {/* Changed prop name and value */}
-      <LuciaVideo show={shouldShowVideo} isBlurred={videoShouldBeBlurred} />
+          </h1>        </div>
+      </section>
     </>
   );
 };

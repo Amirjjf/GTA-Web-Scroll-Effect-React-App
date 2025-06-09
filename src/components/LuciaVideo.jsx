@@ -6,7 +6,7 @@ const FRAME_COUNT = 45;
 const FRAME_PATH = "/Lucia_Caminos_Video_Clip/output_";
 const FRAME_EXT = ".jpg";
 
-function LuciaVideo({ show = false, isBlurred = true }) {
+function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
   const currentFrameRef = useRef(0); // Use ref for smooth animation
@@ -100,12 +100,17 @@ function LuciaVideo({ show = false, isBlurred = true }) {
 
   // Animation loop for smooth frame interpolation and canvas drawing
   useEffect(() => {
-    if (images.length === 0) return;
-    const draw = () => {
+    if (images.length === 0) return;    const draw = () => {
       if (!canvasRef.current || images.length === 0) return;
       const ctx = canvasRef.current.getContext("2d");
       let frameIdx = Math.round(currentFrameRef.current);
       frameIdx = Math.max(0, Math.min(images.length - 1, frameIdx));
+      
+      // Debug logging - only log occasionally to avoid spam
+      if (Math.random() < 0.05) { // Log ~5% of frames
+        console.log("Drawing: currentFrame =", currentFrameRef.current.toFixed(2), "| frameIdx =", frameIdx, "| actualFrame =", frameIdx + 1, "| imgSrc =", images[frameIdx]?.src?.split('/').pop() || 'null');
+      }
+      
       const img = images[frameIdx];
       if (img && img.complete && img.naturalWidth > 0) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -144,45 +149,20 @@ function LuciaVideo({ show = false, isBlurred = true }) {
       rafRef.current = requestAnimationFrame(animate);
     };
     rafRef.current = requestAnimationFrame(animate);
-    return () => rafRef.current && cancelAnimationFrame(rafRef.current);
-  }, [images, videoBlur]); // Update frame based on scrollProgress prop and additional scroll for animation
+    return () => rafRef.current && cancelAnimationFrame(rafRef.current);  }, [images, videoBlur]);
+  // Update frame based on progress prop
   useEffect(() => {
-    if (!show) {
+    // Calculate target frame based on progress (0 to 1)
+    const targetFrame = progress * (FRAME_COUNT - 1);
+    targetFrameRef.current = targetFrame;
+    
+    // Only reset to 0 if both show is false AND progress is 0
+    if (!show && progress === 0) {
       targetFrameRef.current = 0;
-      return;
     }
-
-    const handleScroll = () => {
-      // Calculate scroll progress for video animation
-      // Start calculating after the hero section (5 viewport heights)
-      const heroSectionHeight = window.innerHeight * 5;
-      const currentScroll = window.scrollY;
-
-      if (currentScroll <= heroSectionHeight) {
-        // Before video becomes visible, keep at frame 0
-        targetFrameRef.current = 0;
-        return;
-      }
-
-      // Calculate progress through the video section (300vh)
-      const videoSectionHeight = window.innerHeight * 3;
-      const scrollInVideoSection = currentScroll - heroSectionHeight;
-      const progress = Math.max(
-        0,
-        Math.min(1, scrollInVideoSection / videoSectionHeight)
-      );
-
-      targetFrameRef.current = progress * (FRAME_COUNT - 1);
-    };
-
-    // Set up scroll listener
-    window.addEventListener("scroll", handleScroll);
-
-    // Initial calculation
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [show]);
+    
+    console.log("LuciaVideo: progress =", progress, "| targetFrame =", targetFrame, "| rounded =", Math.round(targetFrame), "| actualFrame =", Math.round(targetFrame) + 1, "| show =", show);
+  }, [show, progress]);
 
   // Responsive canvas size
   useEffect(() => {
@@ -223,8 +203,7 @@ function LuciaVideo({ show = false, isBlurred = true }) {
           alignItems: "center",
           justifyContent: "center",
         }}
-      >
-        <canvas
+      >        <canvas
           ref={canvasRef}
           style={{
             width: "100vw",
@@ -234,6 +213,26 @@ function LuciaVideo({ show = false, isBlurred = true }) {
             transition: "filter 0.8s ease-out",
           }}
         />
+        {/* Debug overlay to show current frame info */}
+        <div style={{
+          position: "absolute",
+          top: "20px",
+          left: "20px",
+          color: "white",
+          background: "rgba(0,0,0,0.8)",
+          padding: "10px",
+          borderRadius: "5px",
+          fontFamily: "monospace",
+          fontSize: "12px",
+          zIndex: 1000,
+          lineHeight: "1.4"
+        }}>
+          Progress: {progress.toFixed(3)}<br/>
+          Target Frame: {(progress * (FRAME_COUNT - 1)).toFixed(1)}<br/>
+          Current Frame: {currentFrameRef.current.toFixed(1)}<br/>
+          Display Frame: {Math.round(currentFrameRef.current) + 1} / {FRAME_COUNT}<br/>
+          Loaded Images: {images.length}
+        </div>
       </div>
     </div>
   );
