@@ -1,4 +1,22 @@
-/* filepath: f:\LUT University\Metal Gear\frontend\src\components\LuciaVideo.css */
+.lucia-video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50;
+  background-color: #000;
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+.lucia-video-container canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .lucia-video-section {
   width: 100vw;
   height: 100vh;

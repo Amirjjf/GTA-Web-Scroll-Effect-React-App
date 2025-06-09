@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "./HeroSection.css";
 import IntroSection from "./IntroSection";
+import LuciaVideo from "./LuciaVideo";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,9 +18,9 @@ const HeroSection = () => {
   const svgOverlayRef = useRef(null);
   const overlayCopyRef = useRef(null);
   const logoMaskRef = useRef(null);
-  const lenisRef = useRef(null);
-  const blackTransitionRef = useRef(null);
-  const [shouldShowIntro, setShouldShowIntro] = useState(false); // Changed from introScrollProgress
+  const lenisRef = useRef(null);  const blackTransitionRef = useRef(null);  const [shouldShowIntro, setShouldShowIntro] = useState(false); // Changed from introScrollProgress
+  const [shouldShowVideo, setShouldShowVideo] = useState(false);
+  const [videoShouldBeBlurred, setVideoShouldBeBlurred] = useState(true);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -103,10 +104,13 @@ const HeroSection = () => {
       end: `${window.innerHeight * 5}px`,
       pin: true,
       pinSpacing: true,
-      scrub: 1,
-      onUpdate: (self) => {
+      scrub: 1,      onUpdate: (self) => {
         const scrollProgress = self.progress;
         setShouldShowIntro(scrollProgress > 0.85 && scrollProgress < 1.0); // Updated condition
+        
+        // Control video visibility and blur
+        setShouldShowVideo(scrollProgress > 0.85);
+        setVideoShouldBeBlurred(scrollProgress < 0.95);
 
         const fadeOpacity = 1 - scrollProgress * (1 / 0.15);
 
@@ -349,10 +353,9 @@ const HeroSection = () => {
           <h1 ref={overlayCopyRef}>
             GTA VI <br /> Coming Soon
           </h1>
-        </div>
-      </section>{" "}
+        </div>      </section>{" "}
       <IntroSection show={shouldShowIntro} /> {/* Changed prop name and value */}
-
+      <LuciaVideo show={shouldShowVideo} isBlurred={videoShouldBeBlurred} />
     </>
   );
 };
