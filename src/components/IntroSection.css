@@ -16,9 +16,6 @@
   width: 80%;
   max-width: 1200px;
   text-align: left;
-  opacity: 0;
-  transform: scale(1.1); /* initial scale for animation */
-  clip-path: circle(20% at 50% 50%); /* initial for center-outwards reveal */
 }
 
 .summary h2 {
