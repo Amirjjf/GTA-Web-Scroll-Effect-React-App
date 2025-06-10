@@ -219,7 +219,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
           top: "20px",
           left: "20px",
           color: "white",
-          background: "rgba(0,0,0,0.8)",
+          background: "rgba(0, 0, 0, 0.8)",
           padding: "10px",
           borderRadius: "5px",
           fontFamily: "monospace",

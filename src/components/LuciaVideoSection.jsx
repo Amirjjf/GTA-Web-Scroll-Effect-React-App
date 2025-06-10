@@ -60,17 +60,17 @@ const LuciaVideoSection = () => {
         ref={sectionRef}
         style={{
           height: "300vh", // Give enough height for scroll animation
-          backgroundColor: "#000",
+          backgroundColor: "#111117",
           position: "relative",
         }}
       >
         {/* This section provides scrollable content for video frame animation */}
-      </section>
       <LuciaVideo 
         show={isVisible} 
         isBlurred={isBlurred} 
         progress={progress}
       />
+      </section>
     </>
   );
 };
