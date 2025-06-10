@@ -16,7 +16,7 @@ const LuciaVideoSection = () => {
     if (!section) return;    // Create ScrollTrigger for the video section
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
-      start: "top top",
+      start: "top bottom",
       end: "bottom bottom",
       pin: false,
       scrub: 1,      onUpdate: (self) => {
@@ -32,7 +32,7 @@ const LuciaVideoSection = () => {
         setIsVisible(scrollProgress > 0);
         
         // Control blur based on progress - less blur as we progress
-        setIsBlurred(scrollProgress < 0.8);
+        setIsBlurred(scrollProgress < 0.15);
       },
       onEnter: () => {
         setIsVisible(true);
