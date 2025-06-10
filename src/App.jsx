@@ -10,6 +10,8 @@ function App() {
     <div className="App">
       <HeroSection />
       <IntroSection />
+      {/* Add spacing div for the intro section scroll area */}
+      <div style={{ height: '300vh' }}></div>
       <LuciaVideoSection />
     </div>
   );

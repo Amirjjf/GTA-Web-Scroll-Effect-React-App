@@ -1,5 +1,5 @@
 .intro {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -7,6 +7,8 @@
   background-color: #111117;
   z-index: 10;
   opacity: 0;
+  top: 0;
+  left: 0;
 }
 
 .summary {
@@ -16,14 +18,7 @@
   text-align: left;
   opacity: 0;
   transform: scale(1.1); /* initial scale for animation */
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
   clip-path: circle(20% at 50% 50%); /* initial for center-outwards reveal */
-}
-
-.intro.active .summary {
-  opacity: 1;
-  transform: scale(0.92); /* final scale for animation */
-  clip-path: circle(100% at 50% 50%);
 }
 
 .summary h2 {

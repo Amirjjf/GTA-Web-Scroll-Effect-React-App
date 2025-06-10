@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./IntroSection.css";
@@ -8,7 +8,6 @@ gsap.registerPlugin(ScrollTrigger);
 const IntroSection = () => {
   const sectionRef = useRef(null);
   const summaryRef = useRef(null);
-  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     const introSection = sectionRef.current;
@@ -16,62 +15,77 @@ const IntroSection = () => {
 
     if (!introSection || !summary) return;
 
-    // Create ScrollTrigger for the IntroSection
+    // Calculate the hero scroll distance (5 viewport heights from HeroSection)
+    const heroScrollDistance = window.innerHeight * 5;
+
+    // Create ScrollTrigger for the IntroSection that starts after hero completes
     const scrollTrigger = ScrollTrigger.create({
-      trigger: introSection,
-      start: "top center",
-      end: "bottom center",
-      scrub: 1,
-      onUpdate: (self) => {
+      trigger: "body", // Use body as trigger to get global scroll position
+      start: `${heroScrollDistance}px top`,
+      end: `${heroScrollDistance + window.innerHeight * 3}px top`, // Give 3 viewport heights for intro animation
+      pin: introSection,
+      pinSpacing: false, // Don't add spacing since we want it to overlay
+      scrub: 1,      onUpdate: (self) => {
         const progress = self.progress;
         
-        // Fade in the section
+        // Initially hide the section, then fade it in smoothly
+        const sectionOpacity = Math.min(1, Math.max(0, progress * 3)); // Smooth fade in
         gsap.set(introSection, {
-          opacity: progress,
+          opacity: sectionOpacity,
         });
-        
-        // Control the active state for CSS transitions
-        if (progress > 0.5 && !isActive) {
-          setIsActive(true);
-        } else if (progress <= 0.5 && isActive) {
-          setIsActive(false);
-        }
 
-        // Animate summary based on progress
+        // Animate summary based on progress - more gradual timing
+        const contentProgress = Math.min(1, Math.max(0, (progress - 0.15) * 1.2)); // Start at 15% progress
         gsap.set(summary, {
-          opacity: progress,
-          scale: 1.1 - (progress * 0.18), // From 1.1 to 0.92
-          clipPath: `circle(${20 + (progress * 80)}% at 50% 50%)`, // From 20% to 100%
+          opacity: contentProgress,
+          scale: 1.1 - (contentProgress * 0.18), // From 1.1 to 0.92
+          clipPath: `circle(${20 + (contentProgress * 80)}% at 50% 50%)`, // From 20% to 100%
         });
-      },
-      onEnter: () => {
-        if (introSection) introSection.style.pointerEvents = "auto";
+      },onEnter: () => {
+        if (introSection) {
+          introSection.style.pointerEvents = "auto";
+          introSection.style.position = "fixed";
+          introSection.style.top = "0";
+          introSection.style.left = "0";
+          introSection.style.width = "100vw";
+          introSection.style.height = "100vh";
+          introSection.style.zIndex = "100";
+        }
       },
       onLeave: () => {
         if (introSection) introSection.style.pointerEvents = "none";
-      },
-      onEnterBack: () => {
-        if (introSection) introSection.style.pointerEvents = "auto";
+      },      onEnterBack: () => {
+        if (introSection) {
+          introSection.style.pointerEvents = "auto";
+          introSection.style.position = "fixed";
+          introSection.style.top = "0";
+          introSection.style.left = "0";
+          introSection.style.width = "100vw";
+          introSection.style.height = "100vh";
+          introSection.style.zIndex = "100";
+        }
       },
       onLeaveBack: () => {
-        if (introSection) introSection.style.pointerEvents = "none";
+        if (introSection) {
+          introSection.style.pointerEvents = "none";
+          // Reset positioning when leaving back
+          introSection.style.position = "relative";
+          introSection.style.zIndex = "10";
+        }
       },
-    });
-
-    return () => {
+    });    return () => {
       scrollTrigger.kill();
     };
-  }, [isActive]);
-
-  return (
+  }, []);  return (
     <section
-      className={`intro ${isActive ? "active" : ""}`}
+      className="intro"
       ref={sectionRef}
       style={{ 
         pointerEvents: "none", 
         opacity: 0,
         height: "100vh",
-        position: "relative"
+        position: "relative",
+        zIndex: 10
       }}
     >
       <div
