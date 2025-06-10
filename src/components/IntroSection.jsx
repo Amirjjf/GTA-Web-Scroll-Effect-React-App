@@ -67,7 +67,7 @@ const IntroSection = () => {
           scale: contentScale,
           clipPath: contentClipPath,
         });
-      },onEnter: () => {
+      },      onEnter: () => {
         if (introSection) {
           introSection.style.pointerEvents = "auto";
           introSection.style.position = "fixed";
@@ -75,7 +75,7 @@ const IntroSection = () => {
           introSection.style.left = "0";
           introSection.style.width = "100vw";
           introSection.style.height = "100vh";
-          introSection.style.zIndex = "100";
+          introSection.style.zIndex = "150"; // Higher z-index to ensure it's above video
         }
       },
       onLeave: () => {
@@ -88,22 +88,20 @@ const IntroSection = () => {
           introSection.style.left = "0";
           introSection.style.width = "100vw";
           introSection.style.height = "100vh";
-          introSection.style.zIndex = "100";
+          introSection.style.zIndex = "150"; // Higher z-index to ensure it's above video
         }
       },
-      onLeaveBack: () => {
-        if (introSection) {
+      onLeaveBack: () => {        if (introSection) {
           introSection.style.pointerEvents = "none";
           // Reset positioning when leaving back
           introSection.style.position = "relative";
-          introSection.style.zIndex = "10";
+          introSection.style.zIndex = "150"; // Keep higher z-index
         }
       },
     });    return () => {
       scrollTrigger.kill();
     };
-  }, []);  return (
-    <section
+  }, []);  return (    <section
       className="intro"
       ref={sectionRef}
       style={{ 
@@ -111,9 +109,9 @@ const IntroSection = () => {
         opacity: 0,
         height: "100vh",
         position: "relative",
-        zIndex: 10
+        zIndex: 150 // Higher initial z-index
       }}
-    >      <div
+    ><div
         className="summary"
         ref={summaryRef}
       >

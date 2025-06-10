@@ -28,7 +28,7 @@ const LuciaVideoSection = () => {
         const actualFrame = Math.round(targetFrame) + 1; // Convert to 1-45 range for display
         console.log("LuciaVideoSection progress:", scrollProgress, "| targetFrame:", targetFrame, "| actualFrame:", actualFrame);
         
-        // Show video when we're in the section (keep it visible after scrolling past)
+        // Show video when we're in the section
         setIsVisible(scrollProgress > 0);
         
         // Control blur based on progress - less blur as we progress
@@ -36,10 +36,9 @@ const LuciaVideoSection = () => {
       },
       onEnter: () => {
         setIsVisible(true);
-      },
-      onLeave: () => {
-        // Keep video visible when scrolling past the section
-        // setIsVisible(false); // Commented out to prevent reset
+      },      onLeave: () => {
+        // Hide video when completely leaving the section
+        // setIsVisible(false);
       },
       onEnterBack: () => {
         setIsVisible(true);

@@ -64,7 +64,6 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
     };
   }, []); // Handle visibility and blur based on props
 
-
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -89,9 +88,10 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
         }
       );
     } else {
+      // Faster fade out to prevent conflicts with IntroSection
       gsap.to(container, {
         opacity: 0,
-        duration: 0.8,
+        duration: 0.3, // Reduced from 0.8s to 0.3s for faster hiding
         ease: "power2.out",
       });
       setVideoBlur(10);
@@ -174,8 +174,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, []);
-  return (
+  }, []);  return (
     <div
       ref={containerRef}
       className="lucia-video-container"
@@ -185,9 +184,9 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: 50,
+        zIndex: show ? 50 : 25, // Lower z-index when not showing to prevent conflicts
         opacity: 0,
-        backgroundColor: "#000",
+        backgroundColor: "#111117",
         pointerEvents: show ? "auto" : "none",
       }}
     >
@@ -198,7 +197,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
           left: 0,
           width: "100%",
           height: "100%",
-          background: "#000",
+          background: "#111117",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -209,17 +208,17 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
             width: "100vw",
             height: "100vh",
             display: "block",
-            background: "#000",
+            background: "#111117",
             transition: "filter 0.8s ease-out",
           }}
         />
         {/* Debug overlay to show current frame info */}
-        <div style={{
+        {/* <div style={{
           position: "absolute",
           top: "20px",
           left: "20px",
           color: "white",
-          background: "rgba(0, 0, 0, 0.8)",
+          background: "rgba(0, 0, 0, 0)",
           padding: "10px",
           borderRadius: "5px",
           fontFamily: "monospace",
@@ -232,7 +231,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
           Current Frame: {currentFrameRef.current.toFixed(1)}<br/>
           Display Frame: {Math.round(currentFrameRef.current) + 1} / {FRAME_COUNT}<br/>
           Loaded Images: {images.length}
-        </div>
+        </div> */}
       </div>
     </div>
   );
