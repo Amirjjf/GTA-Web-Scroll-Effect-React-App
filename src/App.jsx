@@ -2,6 +2,7 @@ import React from 'react';
 import HeroSection from './components/HeroSection';
 import IntroSection from './components/IntroSection';
 import LuciaVideoSection from './components/LuciaVideoSection';
+import LuciaSection from './components/LuciaSection';
 
 import './App.css';
 
@@ -13,6 +14,7 @@ function App() {
       {/* Add spacing div for the intro section scroll area */}
       <div style={{ height: '200vh' }}></div>
       <LuciaVideoSection />
+      <LuciaSection />
     </div>
   );
 }

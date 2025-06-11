@@ -17,7 +17,7 @@ const LuciaVideoSection = () => {
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: "top bottom",
-      end: "bottom bottom",
+      end: "bottom center",
       pin: false,
       scrub: 1,      onUpdate: (self) => {
         const scrollProgress = self.progress;
@@ -38,7 +38,7 @@ const LuciaVideoSection = () => {
         setIsVisible(true);
       },      onLeave: () => {
         // Hide video when completely leaving the section
-        // setIsVisible(false);
+        setIsVisible(false);
       },
       onEnterBack: () => {
         setIsVisible(true);
