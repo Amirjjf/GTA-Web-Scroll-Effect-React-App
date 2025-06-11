@@ -33,7 +33,7 @@
     rgb(255, 68, 168) 0%,
     rgb(255, 119, 169) 33%,
     rgb(255, 200, 178) 66%,
-    #ffe4b5 100%
+    rgb(255, 228, 181) 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
