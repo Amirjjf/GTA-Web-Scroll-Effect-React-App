@@ -30,44 +30,10 @@ const LuciaSection = () => {
             onUpdate: (self) => {
                 const progress = self.progress;
                 
-                // Animate content opacity and position based on scroll progress
+                // Smoothly animate content opacity and position based on scroll progress
                 gsap.set(content, {
                     opacity: progress,
                     y: 50 - (progress * 50), // Move from y: 50 to y: 0
-                });
-            },
-            onEnter: () => {
-                // Ensure content is visible when entering
-                gsap.to(content, {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    ease: "power2.out"
-                });
-            },
-            onLeave: () => {
-                // Keep content visible when leaving
-                gsap.set(content, {
-                    opacity: 1,
-                    y: 0
-                });
-            },
-            onEnterBack: () => {
-                // Ensure content is visible when entering back
-                gsap.to(content, {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    ease: "power2.out"
-                });
-            },
-            onLeaveBack: () => {
-                // Fade out when leaving back
-                gsap.to(content, {
-                    opacity: 0,
-                    y: 50,
-                    duration: 0.5,
-                    ease: "power2.out"
                 });
             }
         });
