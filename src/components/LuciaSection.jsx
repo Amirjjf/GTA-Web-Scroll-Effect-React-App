@@ -1,4 +1,3 @@
-// filepath: f:\LUT University\Metal Gear\frontend\src\components\LuciaSection.jsx
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,27 +8,68 @@ gsap.registerPlugin(ScrollTrigger);
 const LuciaSection = () => {
     const sectionRef = useRef(null);
     const contentRef = useRef(null);
-    
-    useEffect(() => {
+      useEffect(() => {
         const section = sectionRef.current;
         const content = contentRef.current;
     
         if (!section || !content) return;
+
+        // Initially set content to be invisible
+        gsap.set(content, {
+            opacity: 0,
+            y: 50,
+        });
     
         // Create ScrollTrigger for the Lucia section
         const scrollTrigger = ScrollTrigger.create({
             trigger: section,
-            start: "top bottom",
-            end: "bottom bottom",
+            start: "top 80%",
+            end: "top 20%",
             pin: false,
             scrub: 1,
             onUpdate: (self) => {
-                // Update content based on scroll progress
                 const progress = self.progress;
                 
-                // You can add animations here based on scroll progress
-                // For example, fade in elements or animate images
+                // Animate content opacity and position based on scroll progress
+                gsap.set(content, {
+                    opacity: progress,
+                    y: 50 - (progress * 50), // Move from y: 50 to y: 0
+                });
             },
+            onEnter: () => {
+                // Ensure content is visible when entering
+                gsap.to(content, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+            },
+            onLeave: () => {
+                // Keep content visible when leaving
+                gsap.set(content, {
+                    opacity: 1,
+                    y: 0
+                });
+            },
+            onEnterBack: () => {
+                // Ensure content is visible when entering back
+                gsap.to(content, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+            },
+            onLeaveBack: () => {
+                // Fade out when leaving back
+                gsap.to(content, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+            }
         });
     
         return () => {
