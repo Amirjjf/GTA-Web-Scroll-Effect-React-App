@@ -6,9 +6,8 @@ import LuciaVideo from "./LuciaVideo";
 gsap.registerPlugin(ScrollTrigger);
 
 const LuciaVideoSection = () => {
-  const sectionRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);  const [progress, setProgress] = useState(0);
+  const [visibility, setVisibility] = useState(0); // Changed from boolean to number (0-1)
   const [isBlurred, setIsBlurred] = useState(true);
 
   useEffect(() => {
@@ -27,24 +26,35 @@ const LuciaVideoSection = () => {
         const targetFrame = scrollProgress * (45 - 1); // 0-44 range
         const actualFrame = Math.round(targetFrame) + 1; // Convert to 1-45 range for display
         console.log("LuciaVideoSection progress:", scrollProgress, "| targetFrame:", targetFrame, "| actualFrame:", actualFrame);
-        
-        // Show video when we're in the section
-        setIsVisible(scrollProgress > 0);
+          // Set visibility based on scroll progress with gradual fade after 95%
+        let calculatedVisibility;
+        if (scrollProgress <= 0.95) {
+          // Faster visibility mapping - reaches 1 at 60% instead of 95%
+          const adjustedProgress = Math.min(scrollProgress / 0.5, 1);
+          calculatedVisibility = Math.max(0, adjustedProgress);
+        } else {
+          // Gradual fade from 1 to 0 for the last 5% (95% to 100%)
+          const fadeProgress = (scrollProgress - 0.95) / 0.05; // 0 to 1 for the fade range
+          calculatedVisibility = Math.max(0, 1 - fadeProgress);
+        }
+        setVisibility(calculatedVisibility);
         
         // Control blur based on progress - less blur as we progress
         setIsBlurred(scrollProgress < 0.15);
+      },      onEnter: () => {
+        // Video will become visible based on scroll progress
       },
-      onEnter: () => {
-        setIsVisible(true);
-      },      onLeave: () => {
-        // Hide video when completely leaving the section
-        setIsVisible(false);
+      onLeave: () => {
+        // Only hide video if we haven't already faded it out naturally
+        // The fade is handled in onUpdate for smooth transition
       },
       onEnterBack: () => {
-        setIsVisible(true);
+        // Video will become visible based on scroll progress
       },
       onLeaveBack: () => {
-        setIsVisible(false); // Only hide when scrolling back up past the section
+        // Only hide when scrolling back up past the section
+        // But respect the gradual fade logic
+        setVisibility(0);
       },
     });
 
@@ -63,11 +73,11 @@ const LuciaVideoSection = () => {
           position: "relative",
         }}
       >
-        {/* This section provides scrollable content for video frame animation */}
-      <LuciaVideo 
-        show={isVisible} 
+        {/* This section provides scrollable content for video frame animation */}      <LuciaVideo 
+        show={visibility > 0} 
         isBlurred={isBlurred} 
         progress={progress}
+        visibility={visibility}
       />
       </section>
     </>

@@ -6,7 +6,7 @@ const FRAME_COUNT = 45;
 const FRAME_PATH = "/Lucia_Caminos_Video_Clip/output_";
 const FRAME_EXT = ".jpg";
 
-function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
+function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility = 1 }) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
   const currentFrameRef = useRef(0); // Use ref for smooth animation
@@ -62,17 +62,16 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
     return () => {
       cancelled = true;
     };
-  }, []); // Handle visibility and blur based on props
-
+  }, []);  // Handle visibility and blur based on props
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     if (show) {
-      // Animate video in with GSAP
+      // Animate video opacity based on visibility prop (0 to 1)
       gsap.to(container, {
-        opacity: 1,
-        duration: 0.8,
+        opacity: visibility,
+        duration: 0.3,
         ease: "power2.out",
       });
       // Animate blur separately
@@ -96,7 +95,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0 }) {
       });
       setVideoBlur(10);
     }
-  }, [show, isBlurred, videoBlur]);
+  }, [show, isBlurred, videoBlur, visibility]);
 
   // Animation loop for smooth frame interpolation and canvas drawing
   useEffect(() => {
