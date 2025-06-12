@@ -9,12 +9,16 @@ const LuciaSection = () => {
     const sectionRef = useRef(null);
     const contentRef = useRef(null);
     const rightImagesRef = useRef(null);
-      useEffect(() => {
+    useEffect(() => {
         const section = sectionRef.current;
         const content = contentRef.current;
         const rightImages = rightImagesRef.current;
     
         if (!section || !content) return;
+
+        // Check if user is on mobile device
+        const isMobile = window.innerWidth <= 768;
+        const isSmallMobile = window.innerWidth <= 480;
 
         // Initially set content to be invisible
         gsap.set(content, {
@@ -48,6 +52,7 @@ const LuciaSection = () => {
         });
 
         // Create separate ScrollTrigger for parallax effect throughout the entire section
+        // Use consistent animation speeds for all devices
         const parallaxTrigger = ScrollTrigger.create({
             trigger: section,
             start: "top bottom",
@@ -57,18 +62,36 @@ const LuciaSection = () => {
             onUpdate: (self) => {
                 const progress = self.progress;
                 
-                // Animate right images with faster scroll speed throughout the entire section
+                // Animate right images with consistent speed across all devices
+                // Adjusted movement based on device size for better UX
                 if (rightImages) {
+                    let parallaxDistance;
+                    if (isSmallMobile) {
+                        parallaxDistance = -80; // Less movement for small mobile
+                    } else if (isMobile) {
+                        parallaxDistance = -120; // Medium movement for tablets
+                    } else {
+                        parallaxDistance = -200; // Full movement for desktop
+                    }
+                    
                     gsap.set(rightImages, {
-                        y: progress * -200, // Continuous faster movement
+                        y: progress * parallaxDistance,
                     });
                 }
             }
         });
+
+        // Handle window resize to update mobile detection and refresh ScrollTrigger
+        const handleResize = () => {
+            ScrollTrigger.refresh();
+        };
+
+        window.addEventListener('resize', handleResize);
     
         return () => {
             fadeInTrigger.kill();
             parallaxTrigger.kill();
+            window.removeEventListener('resize', handleResize);
         };
     }, []);
     
