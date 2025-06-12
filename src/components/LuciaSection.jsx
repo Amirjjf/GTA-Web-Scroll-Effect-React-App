@@ -8,9 +8,11 @@ gsap.registerPlugin(ScrollTrigger);
 const LuciaSection = () => {
     const sectionRef = useRef(null);
     const contentRef = useRef(null);
+    const rightImagesRef = useRef(null);
       useEffect(() => {
         const section = sectionRef.current;
         const content = contentRef.current;
+        const rightImages = rightImagesRef.current;
     
         if (!section || !content) return;
 
@@ -19,9 +21,16 @@ const LuciaSection = () => {
             opacity: 0,
             y: 50,
         });
+
+        // Initially set right images with no transform (parallax will handle it)
+        if (rightImages) {
+            gsap.set(rightImages, {
+                y: 0,
+            });
+        }
     
-        // Create ScrollTrigger for the Lucia section
-        const scrollTrigger = ScrollTrigger.create({
+        // Create ScrollTrigger for the main content fade-in
+        const fadeInTrigger = ScrollTrigger.create({
             trigger: section,
             start: "top 80%",
             end: "top 20%",
@@ -33,13 +42,33 @@ const LuciaSection = () => {
                 // Smoothly animate content opacity and position based on scroll progress
                 gsap.set(content, {
                     opacity: progress,
-                    y: 50 - (progress * 50), // Move from y: 50 to y: 0
+                    y: 50 - (progress * 50), // Move from 50px down to original position
                 });
+            }
+        });
+
+        // Create separate ScrollTrigger for parallax effect throughout the entire section
+        const parallaxTrigger = ScrollTrigger.create({
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            pin: false,
+            scrub: 1,
+            onUpdate: (self) => {
+                const progress = self.progress;
+                
+                // Animate right images with faster scroll speed throughout the entire section
+                if (rightImages) {
+                    gsap.set(rightImages, {
+                        y: progress * -200, // Continuous faster movement
+                    });
+                }
             }
         });
     
         return () => {
-            scrollTrigger.kill();
+            fadeInTrigger.kill();
+            parallaxTrigger.kill();
         };
     }, []);
     
@@ -56,7 +85,7 @@ const LuciaSection = () => {
                     alt="Lucia Caminos Portrait 1" 
                     className="lucia-image-left"
                 />
-                <div className="lucia-images-right">
+                <div className="lucia-images-right" ref={rightImagesRef}>
                     <img 
                         src="Lucia_Caminos_02.jpg" 
                         alt="Lucia Caminos Portrait 2"
