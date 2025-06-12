@@ -9,7 +9,8 @@
 }
 
 .lucia-introduction {
-  max-width: 1200px;
+  max-width: 1800px;
+  /* width: 70%; */
   margin: 0 auto;
   height: calc(200vh - 8rem); /* Account for padding */
   display: grid;
@@ -26,7 +27,7 @@
 }
 
 .lucia-text-content h1 {
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-size: clamp(2.2rem, 5vw, 10rem); /* Slightly lower min/max for better mobile fit */
   font-weight: bold;
   margin-bottom: 1rem;
   background: linear-gradient(135deg, 
@@ -41,7 +42,7 @@
 }
 
 .lucia-text-content h3 {
-  font-size: clamp(1.3rem, 3vw, 2.2rem);
+  font-size: clamp(1.1rem, 2.5vw, 4rem); /* Lower min/max for subheading balance */
   font-weight: 500;
   margin-bottom: 1.5rem;
   color: rgb(255, 119, 169);
@@ -49,7 +50,7 @@
 }
 
 .lucia-text-content p {
-  font-size: clamp(0.9rem, 1.9vw, 1.4rem);
+  font-size: clamp(1rem, 1.5vw, 2.2rem); /* 1rem min for accessibility, max not too large */
   line-height: 1.6;
   color: rgb(255, 200, 178);
   margin-bottom: 2rem;
