@@ -1,6 +1,7 @@
 /* Sliding Text Component Styles */
 
 .text-strong {
+  color: #facc15; /* Fallback color */
   background: linear-gradient(
     90deg,
     #facc15,

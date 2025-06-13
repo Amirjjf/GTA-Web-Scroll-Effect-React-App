@@ -28,15 +28,18 @@ const SlidingText = ({
   const quoteRef = useRef(null);
   const targetSection = useRef(null);
   const [willChange, setWillChange] = useState(false);
-
   const initTextGradientAnimation = (targetSection) => {
     const timeline = gsap.timeline({ defaults: { ease: "none" } });
-    timeline
-      .from(quoteRef.current, { opacity: 0, duration: 2 })
-      .to(quoteRef.current.querySelector(".text-strong"), {
-        backgroundPositionX: "100%",
-        duration: 1,
-      });
+    const textStrongElement = quoteRef.current?.querySelector(".text-strong");
+    
+    if (quoteRef.current && textStrongElement) {
+      timeline
+        .from(quoteRef.current, { opacity: 0, duration: 2 })
+        .to(textStrongElement, {
+          backgroundPositionX: "100%",
+          duration: 1,
+        });
+    }
 
     return ScrollTrigger.create({
       trigger: targetSection.current,
@@ -47,22 +50,24 @@ const SlidingText = ({
       onToggle: (self) => setWillChange(self.isActive),
     });
   };
-
   const initSlidingTextAnimation = (targetSection) => {
     const slidingTl = gsap.timeline({ defaults: { ease: "none" } });
+    const leftElement = targetSection.current?.querySelector(".ui-left");
+    const rightElement = targetSection.current?.querySelector(".ui-right");
 
-    slidingTl
-      .to(targetSection.current.querySelector(".ui-left"), {
-        xPercent: isSmallScreen() ? -500 : -150,
-      })
-      .from(
-        targetSection.current.querySelector(".ui-right"),
-        { xPercent: isSmallScreen() ? -500 : -150 },
-        "<"
-      );
+    if (leftElement && rightElement) {
+      slidingTl
+        .to(leftElement, {
+          xPercent: isSmallScreen() ? -500 : -150,
+        })
+        .from(
+          rightElement,
+          { xPercent: isSmallScreen() ? -500 : -150 },
+          "<"
+        );
+    }
 
-    return ScrollTrigger.create({
-      trigger: targetSection.current,
+    return ScrollTrigger.create({      trigger: targetSection.current,
       start: "top bottom",
       end: "bottom top",
       scrub: 0,
@@ -71,17 +76,23 @@ const SlidingText = ({
   };
 
   useEffect(() => {
-    const textBgAnimation = initTextGradientAnimation(targetSection);
+    let textBgAnimation;
     let slidingAnimation;
 
-    const { matches } = window.matchMedia(NO_MOTION_PREFERENCE_QUERY);
+    // Small delay to ensure DOM elements are rendered
+    const timeoutId = setTimeout(() => {
+      textBgAnimation = initTextGradientAnimation(targetSection);
 
-    if (matches) {
-      slidingAnimation = initSlidingTextAnimation(targetSection);
-    }
+      const { matches } = window.matchMedia(NO_MOTION_PREFERENCE_QUERY);
+
+      if (matches) {
+        slidingAnimation = initSlidingTextAnimation(targetSection);
+      }
+    }, 100);
 
     return () => {
-      textBgAnimation.kill();
+      clearTimeout(timeoutId);
+      textBgAnimation?.kill();
       slidingAnimation?.kill();
     };
   }, []);
