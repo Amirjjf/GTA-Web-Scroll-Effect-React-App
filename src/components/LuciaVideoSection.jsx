@@ -23,9 +23,9 @@ const LuciaVideoSection = () => {
         setProgress(scrollProgress);
 
         // Match the calculation used in LuciaVideo.jsx
-        const targetFrame = scrollProgress * (45 - 1); // 0-44 range
-        const actualFrame = Math.round(targetFrame) + 1; // Convert to 1-45 range for display
-        console.log("LuciaVideoSection progress:", scrollProgress, "| targetFrame:", targetFrame, "| actualFrame:", actualFrame);
+        // const targetFrame = scrollProgress * (45 - 1); // 0-44 range
+        // const actualFrame = Math.round(targetFrame) + 1; // Convert to 1-45 range for display
+        // console.log("LuciaVideoSection progress:", scrollProgress, "| targetFrame:", targetFrame, "| actualFrame:", actualFrame);
           // Set visibility based on scroll progress with gradual fade after 95%
         let calculatedVisibility;
         if (scrollProgress <= 0.95) {

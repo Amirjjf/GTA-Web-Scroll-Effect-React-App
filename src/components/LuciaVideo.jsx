@@ -106,9 +106,9 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
       frameIdx = Math.max(0, Math.min(images.length - 1, frameIdx));
       
       // Debug logging - only log occasionally to avoid spam
-      if (Math.random() < 0.05) { // Log ~5% of frames
-        console.log("Drawing: currentFrame =", currentFrameRef.current.toFixed(2), "| frameIdx =", frameIdx, "| actualFrame =", frameIdx + 1, "| imgSrc =", images[frameIdx]?.src?.split('/').pop() || 'null');
-      }
+      // if (Math.random() < 0.05) { // Log ~5% of frames
+      //   // console.log("Drawing: currentFrame =", currentFrameRef.current.toFixed(2), "| frameIdx =", frameIdx, "| actualFrame =", frameIdx + 1, "| imgSrc =", images[frameIdx]?.src?.split('/').pop() || 'null');
+      // }
       
       const img = images[frameIdx];
       if (img && img.complete && img.naturalWidth > 0) {
@@ -160,7 +160,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
       targetFrameRef.current = 0;
     }
     
-    console.log("LuciaVideo: progress =", progress, "| targetFrame =", targetFrame, "| rounded =", Math.round(targetFrame), "| actualFrame =", Math.round(targetFrame) + 1, "| show =", show);
+    // console.log("LuciaVideo: progress =", progress, "| targetFrame =", targetFrame, "| rounded =", Math.round(targetFrame), "| actualFrame =", Math.round(targetFrame) + 1, "| show =", show);
   }, [show, progress]);
 
   // Responsive canvas size
@@ -210,6 +210,8 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
             background: "#111117",
             transition: "filter 0.8s ease-out",
           }}
+          draggable="false"
+          onContextMenu={e => e.preventDefault()}
         />
         {/* Debug overlay to show current frame info */}
         {/* <div style={{

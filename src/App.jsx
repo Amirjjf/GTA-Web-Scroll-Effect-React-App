@@ -3,6 +3,7 @@ import HeroSection from './components/HeroSection';
 import IntroSection from './components/IntroSection';
 import LuciaVideoSection from './components/LuciaVideoSection';
 import LuciaSection from './components/LuciaSection';
+import JasonLuciaCover from './components/JasonLuciaCover';
 
 import './App.css';
 
@@ -15,6 +16,8 @@ function App() {
       <div style={{ height: '200vh' }}></div>
       <LuciaVideoSection />
       <LuciaSection />
+      <JasonLuciaCover />
+      <div style={{ height: '100vh' }}></div>
     </div>
   );
 }
