@@ -1,0 +1,137 @@
+/* Sliding Text Component Styles */
+
+.text-strong {
+  background: linear-gradient(
+    90deg,
+    #facc15,
+    #f97316,
+    #dc2626,
+    #facc15
+  );
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-flow 3s ease-in-out infinite;
+}
+
+@keyframes gradient-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.bg-200\% {
+  background-size: 200% 200%;
+}
+
+.animate-gradient {
+  animation: gradient-flow 3s ease-in-out infinite;
+}
+
+/* Sliding text overflow handling */
+.ui-left,
+.ui-right {
+  will-change: transform;
+}
+
+.section-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Additional utility classes for Tailwind-like functionality */
+.opacity-20 {
+  opacity: 0.2;
+}
+
+.text-5xl {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.relative {
+  position: relative;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.py-24 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .md\:text-7xl {
+    font-size: 4.5rem;
+    line-height: 1;
+  }
+  
+  .md\:text-5xl {
+    font-size: 3rem;
+    line-height: 1;
+  }
+  
+  .md\:py-30 {
+    padding-top: 7.5rem;
+    padding-bottom: 7.5rem;
+  }
+  
+  .md\:mt-8 {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .text-5xl {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+}

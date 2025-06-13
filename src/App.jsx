@@ -4,6 +4,7 @@ import IntroSection from './components/IntroSection';
 import LuciaVideoSection from './components/LuciaVideoSection';
 import LuciaSection from './components/LuciaSection';
 import JasonLuciaCover from './components/JasonLuciaCover';
+import SlidingText from './components/SlidingText';
 
 import './App.css';
 
@@ -17,7 +18,9 @@ function App() {
       <LuciaVideoSection />
       <LuciaSection />
       <JasonLuciaCover />
-      <div style={{ height: '100vh' }}></div>
+      <div style={{ height: '20vh' }}></div>
+      <SlidingText />
+      <div style={{ height: '50vh' }}></div>
     </div>
   );
 }
