@@ -6,7 +6,7 @@ import "./SlidingText.css";
 gsap.registerPlugin(ScrollTrigger);
 
 const SlidingText = ({ 
-  leftText = " Gaming Adventure Action Stealth ",
+  leftText = " Why Are We Still Here ",
   rightText = " Metal Gear Solid Legacy ",
   title = "Experience the",
   highlightedText = "Metal Gear Legacy"

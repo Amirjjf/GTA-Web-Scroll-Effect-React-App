@@ -14,7 +14,7 @@
 /* Sliding text elements */
 .sliding-text {
   opacity: 0.2;
-  font-size: 3rem;
+  font-size: 5rem;
   line-height: 1.5;
   font-weight: 700;
   white-space: nowrap;
@@ -29,7 +29,7 @@
 .title {
   margin-top: 1.5rem;
   font-weight: 500;
-  font-size: 2.25rem;
+  font-size: 3.5rem !important;
   line-height: 2.5rem;
   text-align: center;
 }
@@ -62,28 +62,35 @@
 }
 
 /* Responsive design */
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .sliding-section {
-    padding: 7.5rem 0;
+    padding: 4rem 0;
   }
-  
-  .sliding-text {
-    font-size: 4.5rem;
-  }
-  
   .title {
-    font-size: 3rem;
-    line-height: 1;
-    margin-top: 2rem;
+    font-size: 2.8rem !important;
+    line-height: 1.5;
+    margin-top: 1.5rem;
   }
-  
   .right-slider {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
+  }
+  .sliding-text {
+    font-size: 4.3rem !important;
+    line-height: 1.2;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
+  .sliding-section {
+    padding: 2rem 0;
+  }
+  .title {
+    font-size: 2rem !important;
+    margin-top: 1.2rem;
+  }
   .sliding-text {
-    font-size: 2.5rem;
+    font-size: 3rem !important;
+    line-height: 1.5;
+    padding: 0 0.5rem;
   }
 }
