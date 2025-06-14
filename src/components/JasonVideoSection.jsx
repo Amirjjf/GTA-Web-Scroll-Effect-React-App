@@ -13,36 +13,40 @@ const JasonVideoSection = () => {
   const [isBlurred, setIsBlurred] = useState(true);
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
-    const scrollTrigger = ScrollTrigger.create({
+    if (!section) return;    const scrollTrigger = ScrollTrigger.create({
       trigger: section,
-      start: "top bottom",
+      start: "top center", // Start when section reaches center of viewport
       end: "bottom center",
       pin: false,
       scrub: 1,
       onUpdate: (self) => {
         const rawScrollProgress = self.progress;
         setScrollProgress(rawScrollProgress);
-        const frameProgress = Math.min(rawScrollProgress / 0.8, 1);
-        setProgress(frameProgress);
-        let calculatedVisibility;
-        if (rawScrollProgress <= 0.9) {
-          const adjustedProgress = Math.min(rawScrollProgress / 0.8, 1);
-          const smoothstep1 =
-            adjustedProgress *
-            adjustedProgress *
-            (3.0 - 2.0 * adjustedProgress);
-          const smoothstep2 =
-            smoothstep1 * smoothstep1 * (3.0 - 2.0 * smoothstep1);
-          calculatedVisibility = Math.max(0, smoothstep2);
-        } else {
-          const fadeProgress = (rawScrollProgress - 0.9) / 0.1;
-          const smoothFadeOut =
-            fadeProgress * fadeProgress * (3.0 - 2.0 * fadeProgress);
-          calculatedVisibility = Math.max(0, 1 - smoothFadeOut);
+        
+        // Create a delayed start with smooth fade-in
+        let calculatedVisibility = 0;
+        let frameProgress = 0;
+        
+        if (rawScrollProgress >= 0.3) {
+          // Start frame progression from 30% of scroll
+          frameProgress = Math.min((rawScrollProgress - 0.3) / 0.5, 1);
+          setProgress(frameProgress);
+          
+          // Calculate visibility with gradual fade-in
+          if (rawScrollProgress <= 0.85) {
+            const adjustedProgress = Math.min((rawScrollProgress - 0.3) / 0.4, 1);
+            // Use a smoother easing curve
+            const easedProgress = adjustedProgress * adjustedProgress * (3.0 - 2.0 * adjustedProgress);
+            calculatedVisibility = Math.max(0, easedProgress);
+          } else {
+            // Fade out near the end
+            const fadeProgress = (rawScrollProgress - 0.85) / 0.15;
+            calculatedVisibility = Math.max(0, 1 - fadeProgress);
+          }
         }
+        
         setVisibility(calculatedVisibility);
-        setIsBlurred(rawScrollProgress < 0.3);
+        setIsBlurred(rawScrollProgress < 0.5); // Later blur removal
       },
       onEnter: () => {},
       onLeave: () => {},
@@ -59,11 +63,10 @@ const JasonVideoSection = () => {
   }, []);
 
   return (
-    <>
-      <section
+    <>      <section
         ref={sectionRef}
         style={{
-          height: "300vh",
+          height: "400vh", // Increased height for better control
           backgroundColor: "transparent",
           position: "relative",
         }}

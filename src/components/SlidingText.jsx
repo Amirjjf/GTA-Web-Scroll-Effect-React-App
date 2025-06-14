@@ -6,10 +6,10 @@ import "./SlidingText.css";
 gsap.registerPlugin(ScrollTrigger);
 
 const SlidingText = ({
-  leftText = " Why Are We Still Here ",
-  rightText = " Metal Gear Solid Legacy ",
+  leftText = " Welcome to Vice City ",
+  rightText = " Grand Theft Auto VI ",
   title = "Experience the",
-  highlightedText = "Metal Gear Legacy",
+  highlightedText = "GTA VI Legacy",
 }) => {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
