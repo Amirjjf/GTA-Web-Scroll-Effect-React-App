@@ -1,5 +1,40 @@
 /* Sliding Text Component Styles */
 
+/* Main section styling */
+.sliding-section {
+  width: 100%;
+  position: relative;
+  user-select: none;
+  padding: 6rem 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sliding text elements */
+.sliding-text {
+  opacity: 0.2;
+  font-size: 3rem;
+  line-height: 1.5;
+  font-weight: 700;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.right-slider {
+  margin-top: 1.5rem;
+}
+
+/* Title styling */
+.title {
+  margin-top: 1.5rem;
+  font-weight: 500;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  text-align: center;
+}
+
+/* Gradient text effect for highlighted text */
 .text-strong {
   color: #facc15; /* Fallback color */
   background: linear-gradient(
@@ -14,6 +49,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: gradient-flow 3s ease-in-out infinite;
+  font-weight: 700;
 }
 
 @keyframes gradient-flow {
@@ -25,114 +61,29 @@
   }
 }
 
-.bg-200\% {
-  background-size: 200% 200%;
-}
-
-.animate-gradient {
-  animation: gradient-flow 3s ease-in-out infinite;
-}
-
-/* Sliding text overflow handling */
-.ui-left,
-.ui-right {
-  will-change: transform;
-}
-
-.section-container {
-  position: relative;
-  overflow: hidden;
-}
-
-/* Additional utility classes for Tailwind-like functionality */
-.opacity-20 {
-  opacity: 0.2;
-}
-
-.text-5xl {
-  font-size: 3rem;
-  line-height: 1;
-}
-
-.text-4xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.whitespace-nowrap {
-  white-space: nowrap;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.relative {
-  position: relative;
-}
-
-.select-none {
-  user-select: none;
-}
-
-.py-24 {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.will-change-opacity {
-  will-change: opacity;
-}
-
-/* Responsive adjustments */
+/* Responsive design */
 @media (min-width: 768px) {
-  .md\:text-7xl {
-    font-size: 4.5rem;
-    line-height: 1;
+  .sliding-section {
+    padding: 7.5rem 0;
   }
   
-  .md\:text-5xl {
+  .sliding-text {
+    font-size: 4.5rem;
+  }
+  
+  .title {
     font-size: 3rem;
     line-height: 1;
+    margin-top: 2rem;
   }
   
-  .md\:py-30 {
-    padding-top: 7.5rem;
-    padding-bottom: 7.5rem;
-  }
-  
-  .md\:mt-8 {
+  .right-slider {
     margin-top: 2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .text-5xl {
+  .sliding-text {
     font-size: 2.5rem;
-    line-height: 1;
   }
 }
