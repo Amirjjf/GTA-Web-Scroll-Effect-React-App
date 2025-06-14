@@ -23,6 +23,7 @@ function App() {
       <SlidingText />
       {/* <div style={{ height: '20vh' }}></div> */}
       <JasonVideoSection />
+      <div style={{ height: '100vh' }}></div>
     </div>
   );
 }

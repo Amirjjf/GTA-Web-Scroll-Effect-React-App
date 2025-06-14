@@ -5,9 +5,10 @@ const FRAME_COUNT = 30;
 const FRAME_PATH = "/Jason_Video/output_";
 const FRAME_EXT = ".jpg";
 
-function JasonVideo({ show = false, isBlurred = true, progress = 0, visibility = 1 }) {
+function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgress = 0, visibility = 1 }) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
+  const [zoomScale, setZoomScale] = useState(1); // Add zoom scale state
   const currentFrameRef = useRef(0); // Use ref for smooth animation
   const targetFrameRef = useRef(0);
   const rafRef = useRef(null);
@@ -108,8 +109,7 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, visibility =
 
         // Apply blur filter
         ctx.filter = `blur(${videoBlur}px)`;
-        
-        // Calculate scaling to cover the canvas while maintaining aspect ratio
+          // Calculate scaling to cover the canvas while maintaining aspect ratio
         const canvasAspect = canvasRef.current.width / canvasRef.current.height;
         const imgAspect = img.naturalWidth / img.naturalHeight;
         
@@ -117,54 +117,66 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, visibility =
         
         if (canvasAspect > imgAspect) {
           // Canvas is wider than image - fit to width
-          drawWidth = canvasRef.current.width;
-          drawHeight = drawWidth / imgAspect;
-          offsetX = 0;
+          drawWidth = canvasRef.current.width * zoomScale; // Apply zoom
+          drawHeight = (drawWidth / imgAspect);
+          offsetX = (canvasRef.current.width - drawWidth) / 2; // Center the zoomed image
           offsetY = (canvasRef.current.height - drawHeight) / 2;
         } else {
           // Canvas is taller than image - fit to height
-          drawHeight = canvasRef.current.height;
+          drawHeight = canvasRef.current.height * zoomScale; // Apply zoom
           drawWidth = drawHeight * imgAspect;
-          offsetX = (canvasRef.current.width - drawWidth) / 2;
-          offsetY = 0;
+          offsetX = (canvasRef.current.width - drawWidth) / 2; // Center the zoomed image
+          offsetY = (canvasRef.current.height - drawHeight) / 2;
         }
         
         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
       } else {
-        // Fill with background color if image not ready
-        ctx.fillStyle = "#111117";
+        // Fill with background color if image not ready        ctx.fillStyle = "#111117";
         ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
-    };
-
-    const animate = () => {
-      // Interpolate currentFrameRef toward targetFrameRef (faster for less lag)
+    };    const animate = () => {
+      // Ultra-fast frame snapping for maximum smoothness
       const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.01) {
-        currentFrameRef.current += diff * 0.15; // Smooth interpolation
+        currentFrameRef.current += diff * 0.35; // Almost instant snapping
       } else {
-        currentFrameRef.current = targetFrameRef.current;
+        currentFrameRef.current = targetFrameRef.current; // Direct assignment for tiny differences
       }
       draw();
       rafRef.current = requestAnimationFrame(animate);
     };
 
-    rafRef.current = requestAnimationFrame(animate);
-
-    return () => rafRef.current && cancelAnimationFrame(rafRef.current);
-  }, [images, videoBlur]);
-
-  // Update frame based on progress prop
+    rafRef.current = requestAnimationFrame(animate);    return () => rafRef.current && cancelAnimationFrame(rafRef.current);
+  }, [images, videoBlur, zoomScale]); // Added zoomScale to dependencies// Update frame based on progress prop
   useEffect(() => {
     // Calculate target frame based on progress (0 to 1)
     const targetFrame = progress * (FRAME_COUNT - 1);
+    
+    // Direct assignment for ultra-responsive frame changes
     targetFrameRef.current = targetFrame;
+    
+    // For very close frames, snap immediately
+    const currentGap = Math.abs(targetFrame - currentFrameRef.current);
+    if (currentGap < 0.5) {
+      currentFrameRef.current = targetFrame; // Instant snap for very small changes
+    }
     
     // Only reset to 0 if both show is false AND progress is 0
     if (!show && progress === 0) {
       targetFrameRef.current = 0;
+      currentFrameRef.current = 0; // Also snap current frame to 0
+    }  }, [show, progress]);
+  // Calculate zoom effect based on scrollProgress (zoom in from 70% to 100%)
+  useEffect(() => {
+    if (scrollProgress >= 0.7) {
+      // Progress from 0.7 to 1.0 maps to zoom from 1.0 to 1.15 (15% zoom)
+      const zoomProgress = (scrollProgress - 0.7) / 0.3; // 0 to 1 for the zoom range
+      const calculatedZoom = 1 + (zoomProgress * 0.05); // 1.0 to 1.15
+      setZoomScale(calculatedZoom);
+    } else {
+      setZoomScale(1); // No zoom below 70% progress
     }
-  }, [show, progress]);
+  }, [scrollProgress]);
 
   // Responsive canvas size
   useEffect(() => {

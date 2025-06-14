@@ -8,39 +8,42 @@ gsap.registerPlugin(ScrollTrigger);
 const JasonVideoSection = () => {
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0); // Add raw scroll progress
   const [visibility, setVisibility] = useState(0); // Changed from boolean to number (0-1)
   const [isBlurred, setIsBlurred] = useState(true);
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
-
-    // Create ScrollTrigger for the video section
+    if (!section) return;    // Create ScrollTrigger for the video section
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: "top bottom",
       end: "bottom center",
       pin: false,
-      scrub: 1,
+      scrub: 1, // Reduced from 1 to 0.5 for more immediate response
       onUpdate: (self) => {
-        const scrollProgress = self.progress;
-        setProgress(scrollProgress);
+        const rawScrollProgress = self.progress;
+        setScrollProgress(rawScrollProgress); // Store raw scroll progress for zoom calculation
+        
+        // Compress frame animation to 60% of scroll distance for ultra-fast frame changes
+        const frameProgress = Math.min(rawScrollProgress / 0.7, 1);
+        setProgress(frameProgress);
 
         // Set visibility based on scroll progress with gradual fade after 95%
         let calculatedVisibility;
-        if (scrollProgress <= 0.95) {
+        if (rawScrollProgress <= 0.95) {
           // Faster visibility mapping - reaches 1 at 60% instead of 95%
-          const adjustedProgress = Math.min(scrollProgress / 0.5, 1);
+          const adjustedProgress = Math.min(rawScrollProgress / 0.3, 1);
           calculatedVisibility = Math.max(0, adjustedProgress);
         } else {
           // Gradual fade from 1 to 0 for the last 5% (95% to 100%)
-          const fadeProgress = (scrollProgress - 0.95) / 0.05; // 0 to 1 for the fade range
+          const fadeProgress = (rawScrollProgress - 0.95) / 0.05; // 0 to 1 for the fade range
           calculatedVisibility = Math.max(0, 1 - fadeProgress);
         }
         setVisibility(calculatedVisibility);
         
         // Control blur based on progress - less blur as we progress
-        setIsBlurred(scrollProgress < 0.15);
+        setIsBlurred(rawScrollProgress < 0.15);
       },
       onEnter: () => {
         // Video will become visible based on scroll progress
@@ -74,11 +77,11 @@ const JasonVideoSection = () => {
           position: "relative",
         }}
       >
-        {/* This section provides scrollable content for video frame animation */}
-        <JasonVideo 
+        {/* This section provides scrollable content for video frame animation */}        <JasonVideo 
           show={visibility > 0} 
           isBlurred={isBlurred} 
           progress={progress}
+          scrollProgress={scrollProgress}
           visibility={visibility}
         />
       </section>
