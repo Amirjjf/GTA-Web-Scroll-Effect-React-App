@@ -15,7 +15,8 @@ const HeroSection = () => {
   const fadeOverlayRef = useRef(null);
   const svgOverlayRef = useRef(null);
   const overlayCopyRef = useRef(null);
-  const logoMaskRef = useRef(null);  const lenisRef = useRef(null);
+  const logoMaskRef = useRef(null);
+  const lenisRef = useRef(null);
   const blackTransitionRef = useRef(null);
 
   useEffect(() => {
@@ -99,7 +100,8 @@ const HeroSection = () => {
       start: "top top",
       end: `${window.innerHeight * 5}px`,
       pin: true,
-      pinSpacing: true,      scrub: 1,
+      pinSpacing: true,
+      scrub: 1,
       onUpdate: (self) => {
         const scrollProgress = self.progress;
 
@@ -343,7 +345,8 @@ const HeroSection = () => {
         <div className="overlay-copy">
           <h1 ref={overlayCopyRef}>
             GTA VI <br /> Coming Soon
-          </h1>        </div>
+          </h1>{" "}
+        </div>
       </section>
     </>
   );

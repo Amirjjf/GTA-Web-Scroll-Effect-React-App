@@ -5,30 +5,35 @@ import "./SlidingText.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SlidingText = ({ 
+const SlidingText = ({
   leftText = " Why Are We Still Here ",
   rightText = " Metal Gear Solid Legacy ",
   title = "Experience the",
-  highlightedText = "Metal Gear Legacy"
-}) => {  const sectionRef = useRef(null);
+  highlightedText = "Metal Gear Legacy",
+}) => {
+  const sectionRef = useRef(null);
   const titleRef = useRef(null);
-  
+
   useEffect(() => {
-    // Add a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
       const section = sectionRef.current;
       const title = titleRef.current;
-      const leftSlider = section?.querySelector('.left-slider');
-      const rightSlider = section?.querySelector('.right-slider');
-      const textStrong = title?.querySelector('.text-strong');
+      const leftSlider = section?.querySelector(".left-slider");
+      const rightSlider = section?.querySelector(".right-slider");
+      const textStrong = title?.querySelector(".text-strong");
 
       if (!section || !title || !leftSlider || !rightSlider || !textStrong) {
-        console.log('Missing elements:', { section, title, leftSlider, rightSlider, textStrong });
+        console.log("Missing elements:", {
+          section,
+          title,
+          leftSlider,
+          rightSlider,
+          textStrong,
+        });
         return;
       }
 
-      // Ensure section is visible by default
-      gsap.set(section, { opacity: 1, zIndex: 100 });      // Create visibility control for scroll direction
+      gsap.set(section, { opacity: 1, zIndex: 100 });
       const visibilityTrigger = ScrollTrigger.create({
         trigger: section,
         start: "top bottom",
@@ -37,56 +42,49 @@ const SlidingText = ({
           gsap.set(section, { opacity: 1, zIndex: 100 });
         },
         onLeave: () => {
-          // Keep visible but lower z-index when scrolling down past it
           gsap.set(section, { opacity: 1, zIndex: 50 });
         },
         onEnterBack: () => {
-          // Ensure it's visible and above other content when scrolling back up
           gsap.set(section, { opacity: 1, zIndex: 100 });
-          // Refresh ScrollTrigger to ensure animations work properly when coming back
           ScrollTrigger.refresh();
         },
         onLeaveBack: () => {
           gsap.set(section, { opacity: 1, zIndex: 100 });
-        }
+        },
       });
 
-      // Create title fade and gradient animation
       const titleTimeline = gsap.timeline({ defaults: { ease: "none" } });
       titleTimeline
         .from(title, { opacity: 0, duration: 2 })
-        .to(textStrong, { backgroundPositionX: "100%", duration: 1 });      const titleScrollTrigger = ScrollTrigger.create({
+        .to(textStrong, { backgroundPositionX: "100%", duration: 1 });
+      const titleScrollTrigger = ScrollTrigger.create({
         trigger: section,
-        start: "center bottom", 
+        start: "center bottom",
         end: "center center",
         scrub: 0,
         animation: titleTimeline,
       });
 
-      // Check for motion preference
-      const hasMotionPreference = window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
-      
+      const hasMotionPreference = window.matchMedia(
+        "(prefers-reduced-motion: no-preference)"
+      ).matches;
+
       let slidingScrollTrigger;
       if (hasMotionPreference) {
-        // Create sliding animation with proper directions
         const slidingTimeline = gsap.timeline({ defaults: { ease: "none" } });
         const moveDistance = window.innerWidth < 768 ? 500 : 150;
-        
-        // Set initial positions
         gsap.set(rightSlider, { xPercent: -moveDistance });
-        
         slidingTimeline
-          .to(leftSlider, { xPercent: -moveDistance }) // Left slider moves left
-          .to(rightSlider, { xPercent: 0 }, "<"); // Right slider moves from left to center
-
+          .to(leftSlider, { xPercent: -moveDistance })
+          .to(rightSlider, { xPercent: 0 }, "<");
         slidingScrollTrigger = ScrollTrigger.create({
           trigger: section,
           start: "top bottom",
-          end: "bottom top", 
+          end: "bottom top",
           scrub: 0,
           animation: slidingTimeline,
         });
-      }      // Cleanup function
+      }
       return () => {
         titleScrollTrigger?.kill();
         slidingScrollTrigger?.kill();
@@ -102,21 +100,14 @@ const SlidingText = ({
   const repeatedText = (text) => text.repeat(5);
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="sliding-section"
-    >
-      <p className="left-slider sliding-text">
-        {repeatedText(leftText)}
-      </p>
-      
+    <section ref={sectionRef} className="sliding-section">
+      <p className="left-slider sliding-text">{repeatedText(leftText)}</p>
+
       <h1 ref={titleRef} className="title">
         {title} <span className="text-strong">{highlightedText}</span>
       </h1>
-      
-      <p className="right-slider sliding-text">
-        {repeatedText(rightText)}
-      </p>
+
+      <p className="right-slider sliding-text">{repeatedText(rightText)}</p>
     </section>
   );
 };

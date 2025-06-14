@@ -5,7 +5,13 @@ const FRAME_COUNT = 51;
 const FRAME_PATH = "/Jason_Video/output_";
 const FRAME_EXT = ".png";
 
-function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgress = 0, visibility = 1 }) {
+function JasonVideo({
+  show = false,
+  isBlurred = true,
+  progress = 0,
+  scrollProgress = 0,
+  visibility = 1,
+}) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
   const [zoomScale, setZoomScale] = useState(1); // Add zoom scale state
@@ -60,12 +66,10 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
   // Handle visibility and blur based on props
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;    if (show) {
-      // Set opacity and visibility directly without animation for instant response
+    if (!container) return;
+    if (show) {
       container.style.opacity = visibility;
-      container.style.visibility = 'visible';
-      
-      // Animate blur separately (keep this smooth)
+      container.style.visibility = "visible";
       gsap.to(
         { blur: videoBlur },
         {
@@ -78,9 +82,8 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
         }
       );
     } else {
-      // Instant hide to prevent border visibility
       container.style.opacity = 0;
-      container.style.visibility = 'hidden';
+      container.style.visibility = "hidden";
       setVideoBlur(10);
     }
   }, [show, isBlurred, videoBlur, visibility]);
@@ -94,76 +97,73 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
       const ctx = canvasRef.current.getContext("2d");
       let frameIdx = Math.round(currentFrameRef.current);
       frameIdx = Math.max(0, Math.min(images.length - 1, frameIdx));
-      
+
       const img = images[frameIdx];
       if (img && img.complete && img.naturalWidth > 0) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-        // Apply blur filter
         ctx.filter = `blur(${videoBlur}px)`;
-          // Calculate scaling to cover the canvas while maintaining aspect ratio
         const canvasAspect = canvasRef.current.width / canvasRef.current.height;
         const imgAspect = img.naturalWidth / img.naturalHeight;
-        
+
         let drawWidth, drawHeight, offsetX, offsetY;
-        
+
         if (canvasAspect > imgAspect) {
-          // Canvas is wider than image - fit to width
-          drawWidth = canvasRef.current.width * zoomScale; // Apply zoom
-          drawHeight = (drawWidth / imgAspect);
-          offsetX = (canvasRef.current.width - drawWidth) / 2; // Center the zoomed image
+          drawWidth = canvasRef.current.width * zoomScale;
+          drawHeight = drawWidth / imgAspect;
+          offsetX = (canvasRef.current.width - drawWidth) / 2;
           offsetY = (canvasRef.current.height - drawHeight) / 2;
         } else {
-          // Canvas is taller than image - fit to height
-          drawHeight = canvasRef.current.height * zoomScale; // Apply zoom
+          drawHeight = canvasRef.current.height * zoomScale;
           drawWidth = drawHeight * imgAspect;
-          offsetX = (canvasRef.current.width - drawWidth) / 2; // Center the zoomed image
+          offsetX = (canvasRef.current.width - drawWidth) / 2;
           offsetY = (canvasRef.current.height - drawHeight) / 2;
         }
-        
+
         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
       } else {
-        // Fill with background color if image not ready        ctx.fillStyle = "#111117";
+        ctx.fillStyle = "#111117";
         ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
-    };    const animate = () => {
-      // Ultra-fast frame snapping for maximum smoothness
+    };
+    const animate = () => {
       const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.01) {
-        currentFrameRef.current += diff * 0.35; // Almost instant snapping
+        currentFrameRef.current += diff * 0.35;
       } else {
-        currentFrameRef.current = targetFrameRef.current; // Direct assignment for tiny differences
+        currentFrameRef.current = targetFrameRef.current;
       }
       draw();
       rafRef.current = requestAnimationFrame(animate);
     };
 
-    rafRef.current = requestAnimationFrame(animate);    return () => rafRef.current && cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(animate);
+    return () => rafRef.current && cancelAnimationFrame(rafRef.current);
   }, [images, videoBlur, zoomScale]); // Added zoomScale to dependencies// Update frame based on progress prop
   useEffect(() => {
     // Calculate target frame based on progress (0 to 1)
     const targetFrame = progress * (FRAME_COUNT - 1);
-    
+
     // Direct assignment for ultra-responsive frame changes
     targetFrameRef.current = targetFrame;
-    
+
     // For very close frames, snap immediately
     const currentGap = Math.abs(targetFrame - currentFrameRef.current);
     if (currentGap < 0.5) {
       currentFrameRef.current = targetFrame; // Instant snap for very small changes
     }
-    
+
     // Only reset to 0 if both show is false AND progress is 0
     if (!show && progress === 0) {
       targetFrameRef.current = 0;
       currentFrameRef.current = 0; // Also snap current frame to 0
-    }  }, [show, progress]);
+    }
+  }, [show, progress]);
   // Calculate zoom effect based on scrollProgress (zoom in from 70% to 100%)
   useEffect(() => {
     if (scrollProgress >= 0.7) {
       // Progress from 0.7 to 1.0 maps to zoom from 1.0 to 1.15 (15% zoom)
       const zoomProgress = (scrollProgress - 0.7) / 0.3; // 0 to 1 for the zoom range
-      const calculatedZoom = 1 + (zoomProgress * 0.05); // 1.0 to 1.15
+      const calculatedZoom = 1 + zoomProgress * 0.05; // 1.0 to 1.15
       setZoomScale(calculatedZoom);
     } else {
       setZoomScale(1); // No zoom below 70% progress
@@ -185,7 +185,8 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
   return (
     <div
       ref={containerRef}
-      className="jason-video-container"      style={{
+      className="jason-video-container"
+      style={{
         position: "fixed",
         top: 0,
         left: 0,
@@ -221,7 +222,7 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
             transition: "filter 0.8s ease-out",
           }}
           draggable="false"
-          onContextMenu={e => e.preventDefault()}
+          onContextMenu={(e) => e.preventDefault()}
         />
       </div>
     </div>

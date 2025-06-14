@@ -6,7 +6,12 @@ const FRAME_COUNT = 45;
 const FRAME_PATH = "/Lucia_Caminos_Video_Clip/output_";
 const FRAME_EXT = ".jpg";
 
-function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility = 1 }) {
+function LuciaVideo({
+  show = false,
+  isBlurred = true,
+  progress = 0,
+  visibility = 1,
+}) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
   const currentFrameRef = useRef(0); // Use ref for smooth animation
@@ -62,7 +67,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
     return () => {
       cancelled = true;
     };
-  }, []);  // Handle visibility and blur based on props
+  }, []); // Handle visibility and blur based on props
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -99,17 +104,18 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
 
   // Animation loop for smooth frame interpolation and canvas drawing
   useEffect(() => {
-    if (images.length === 0) return;    const draw = () => {
+    if (images.length === 0) return;
+    const draw = () => {
       if (!canvasRef.current || images.length === 0) return;
       const ctx = canvasRef.current.getContext("2d");
       let frameIdx = Math.round(currentFrameRef.current);
       frameIdx = Math.max(0, Math.min(images.length - 1, frameIdx));
-      
+
       // Debug logging - only log occasionally to avoid spam
       // if (Math.random() < 0.05) { // Log ~5% of frames
       //   // console.log("Drawing: currentFrame =", currentFrameRef.current.toFixed(2), "| frameIdx =", frameIdx, "| actualFrame =", frameIdx + 1, "| imgSrc =", images[frameIdx]?.src?.split('/').pop() || 'null');
       // }
-      
+
       const img = images[frameIdx];
       if (img && img.complete && img.naturalWidth > 0) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -128,8 +134,6 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
         const offsetX = (canvasW - drawW) / 2;
         const offsetY = (canvasH - drawH) / 2;
         ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-
-        // Reset filter
         ctx.filter = "none";
       } else {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -137,10 +141,9 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
     };
 
     const animate = () => {
-      // Interpolate currentFrameRef toward targetFrameRef (faster for less lag)
       const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.01) {
-        currentFrameRef.current += diff * 0.35; // Increase speed for more responsiveness
+        currentFrameRef.current += diff * 0.35;
       } else {
         currentFrameRef.current = targetFrameRef.current;
       }
@@ -148,18 +151,19 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
       rafRef.current = requestAnimationFrame(animate);
     };
     rafRef.current = requestAnimationFrame(animate);
-    return () => rafRef.current && cancelAnimationFrame(rafRef.current);  }, [images, videoBlur]);
+    return () => rafRef.current && cancelAnimationFrame(rafRef.current);
+  }, [images, videoBlur]);
   // Update frame based on progress prop
   useEffect(() => {
     // Calculate target frame based on progress (0 to 1)
     const targetFrame = progress * (FRAME_COUNT - 1);
     targetFrameRef.current = targetFrame;
-    
+
     // Only reset to 0 if both show is false AND progress is 0
     if (!show && progress === 0) {
       targetFrameRef.current = 0;
     }
-    
+
     // console.log("LuciaVideo: progress =", progress, "| targetFrame =", targetFrame, "| rounded =", Math.round(targetFrame), "| actualFrame =", Math.round(targetFrame) + 1, "| show =", show);
   }, [show, progress]);
 
@@ -173,7 +177,8 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, []);  return (
+  }, []);
+  return (
     <div
       ref={containerRef}
       className="lucia-video-container"
@@ -201,7 +206,9 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
           alignItems: "center",
           justifyContent: "center",
         }}
-      >        <canvas
+      >
+        {" "}
+        <canvas
           ref={canvasRef}
           style={{
             width: "100vw",
@@ -211,7 +218,7 @@ function LuciaVideo({ show = false, isBlurred = true, progress = 0, visibility =
             transition: "filter 0.8s ease-out",
           }}
           draggable="false"
-          onContextMenu={e => e.preventDefault()}
+          onContextMenu={(e) => e.preventDefault()}
         />
         {/* Debug overlay to show current frame info */}
         {/* <div style={{

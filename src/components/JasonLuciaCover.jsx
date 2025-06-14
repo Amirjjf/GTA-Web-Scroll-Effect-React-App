@@ -14,13 +14,11 @@ const JasonLuciaCover = () => {
     const container = containerRef.current;
     if (!section || !container) return;
 
-    // Check if user is on mobile device
     const isMobile = window.innerWidth <= 768;
     const isSmallMobile = window.innerWidth <= 480;
 
-    // Find the LuciaSection element (by class name)
     const luciaSection = document.querySelector(".lucia-section");
-    if (!luciaSection) return; // Pin JasonLuciaCover until LuciaSection enters
+    if (!luciaSection) return;
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: "top bottom",
@@ -28,30 +26,23 @@ const JasonLuciaCover = () => {
       pin: false,
       scrub: 1,
       onUpdate: (self) => {
-        // console.log("JasonLuciaCover progress:", self.progress);
         let yPosition;
-        
-        // Adjust movement range based on device
         let maxMovement;
         if (isSmallMobile) {
-          maxMovement = 3; // Reduced movement for small mobile
+          maxMovement = 3;
         } else if (isMobile) {
-          maxMovement = 4; // Medium movement for tablet
+          maxMovement = 4;
         } else {
-          maxMovement = 5; // Full movement for desktop
+          maxMovement = 5;
         }
-        
         if (self.progress <= 0.5) {
-          // Phase 1: 0 to 0.5 progress -> yPosition 0 to +maxMovement
           yPosition = maxMovement * (self.progress * 2);
         } else if (self.progress <= 0.6) {
-          // Phase 2: 0.5 to 0.6 progress -> yPosition +maxMovement to 0
-          const phase2Progress = (self.progress - 0.5) / 0.1; // normalize 0.5-0.6 to 0-1
-          yPosition = maxMovement * (1 - phase2Progress); // maxMovement to 0
+          const phase2Progress = (self.progress - 0.5) / 0.1;
+          yPosition = maxMovement * (1 - phase2Progress);
         } else {
-          // Phase 3: 0.6 to 1.0 progress -> yPosition 0 to -maxMovement
-          const phase3Progress = (self.progress - 0.6) / 0.4; // normalize 0.6-1.0 to 0-1
-          yPosition = -maxMovement * phase3Progress; // 0 to -maxMovement
+          const phase3Progress = (self.progress - 0.6) / 0.4;
+          yPosition = -maxMovement * phase3Progress;
         }
         console.log("Progress:", self.progress, "yPosition:", yPosition);
         gsap.set(container, {
@@ -61,16 +52,15 @@ const JasonLuciaCover = () => {
       },
     });
 
-    // Handle window resize to update mobile detection and refresh ScrollTrigger
     const handleResize = () => {
       ScrollTrigger.refresh();
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      scrollTrigger.kill(); // Cleanup on unmount
-      window.removeEventListener('resize', handleResize);
+      scrollTrigger.kill();
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
   return (

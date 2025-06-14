@@ -1,5 +1,4 @@
 .lucia-section {
-  /* background-color: #111117; */
   background: transparent;
   color: white;
   min-height: 200vh;
@@ -10,23 +9,22 @@
 
 @media (max-width: 768px) {
   .lucia-section {
-    min-height: 180vh; /* Increased from 150vh to ensure all content is visible */
+    min-height: 180vh;
     padding: 2rem 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .lucia-section {
-    min-height: 200vh; /* Increased from 120vh to ensure all content is visible */
+    min-height: 200vh;
     padding: 1.5rem 1rem;
   }
 }
 
 .lucia-introduction {
   max-width: 1800px;
-  /* width: 70%; */
   margin: 0 auto;
-  height: calc(200vh - 8rem); /* Account for padding */
+  height: calc(200vh - 8rem);
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto 1fr;
@@ -36,15 +34,15 @@
 
 @media (max-width: 768px) {
   .lucia-introduction {
-    height: auto; /* Changed from fixed height to auto */
-    min-height: calc(180vh - 4rem); /* Increased to match section height */
+    height: auto;
+    min-height: calc(180vh - 4rem);
   }
 }
 
 @media (max-width: 480px) {
   .lucia-introduction {
-    height: auto; /* Changed from fixed height to auto */
-    min-height: calc(200vh - 3rem); /* Increased to match section height */
+    height: auto;
+    min-height: calc(200vh - 3rem);
   }
 }
 
@@ -55,10 +53,11 @@
 }
 
 .lucia-text-content h1 {
-  font-size: clamp(2.2rem, 5vw, 10rem); /* Slightly lower min/max for better mobile fit */
+  font-size: clamp(2.2rem, 5vw, 10rem);
   font-weight: bold;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     rgb(255, 68, 168) 0%,
     rgb(255, 119, 169) 33%,
     rgb(255, 200, 178) 66%,
@@ -84,7 +83,7 @@
 }
 
 .lucia-text-content h3 {
-  font-size: clamp(1.1rem, 2.5vw, 4rem); /* Lower min/max for subheading balance */
+  font-size: clamp(1.1rem, 2.5vw, 4rem);
   font-weight: 500;
   margin-bottom: 1.5rem;
   color: rgb(255, 119, 169);
@@ -107,7 +106,7 @@
 }
 
 .lucia-text-content p {
-  font-size: clamp(1rem, 1.5vw, 2.2rem); /* 1rem min for accessibility, max not too large */
+  font-size: clamp(1rem, 1.5vw, 2.2rem);
   line-height: 1.6;
   color: rgb(255, 200, 178);
   margin-bottom: 2rem;
@@ -147,33 +146,33 @@
   gap: 2rem;
   height: 100%;
   min-height: 100vh;
-  margin-top: 30vh; /* Increased from 20vh to start lower */
+  margin-top: 30vh;
 }
 
 @media (max-width: 768px) {
   .lucia-images-right {
     margin-top: 1rem;
-    min-height: 100vh; /* Reduced from 120vh */
+    min-height: 100vh;
     flex-direction: column;
     height: auto;
-    gap: 2.5rem; /* Reduced gap slightly */
+    gap: 2.5rem;
   }
-  
+
   .lucia-images-right img {
-    height: 35vh; /* Reduced from 50vh */
+    height: 35vh;
     min-height: 32vh;
     flex: none;
   }
-  
+
   .lucia-images-right img:first-child {
-    height: 40vh; /* Reduced from 60vh */
+    height: 40vh;
     min-height: 38vh;
     flex: none;
-    margin-top: 3rem; /* Added margin for spacing */
+    margin-top: 3rem;
   }
-  
+
   .lucia-images-right img:last-child {
-    height: 32vh; /* Reduced from 45vh */
+    height: 32vh;
     min-height: 30vh;
     flex: none;
   }
@@ -181,7 +180,7 @@
 
 @media (max-width: 480px) {
   .lucia-images-right {
-    margin-top: 10vh; /* Further reduced for small mobile */
+    margin-top: 10vh;
     min-height: 50vh;
   }
 }
@@ -204,53 +203,53 @@
   flex: none;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .lucia-introduction {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto auto;
     gap: 1.5rem;
-    height: auto; /* Allow natural height flow */
-    min-height: calc(180vh - 4rem); /* Increased to match section height */
+    height: auto;
+    min-height: calc(180vh - 4rem);
   }
-  
+
   .lucia-text-content {
     grid-column: 1;
     grid-row: 1;
     padding-right: 0;
     margin-bottom: 1rem;
   }
-  
+
   .lucia-image-left {
     grid-column: 1;
     grid-row: 2;
     min-height: 40vh;
     height: 45vh;
     margin-bottom: 1rem;
-  }  .lucia-images-right {
+  }
+  .lucia-images-right {
     grid-column: 1;
     grid-row: 3 / 5;
     flex-direction: column;
     height: auto;
-    min-height: 100vh; /* Reduced to match the updated media query */
+    min-height: 100vh;
     margin-top: 1rem;
-    gap: 1.5rem; /* Reduced gap slightly */
+    gap: 1.5rem;
   }
-  
+
   .lucia-images-right img {
-    height: 35vh; /* Reduced from 50vh */
+    height: 35vh;
     min-height: 32vh;
     flex: none;
   }
-  
+
   .lucia-images-right img:first-child {
-    height: 40vh; /* Reduced from 60vh */
+    height: 40vh;
     min-height: 38vh;
     flex: none;
   }
-  
+
   .lucia-images-right img:last-child {
-    height: 32vh; /* Reduced from 45vh */
+    height: 32vh;
     min-height: 30vh;
     flex: none;
   }
@@ -260,32 +259,31 @@
   .lucia-images-right {
     flex-direction: column;
     gap: 1rem;
-    min-height: 90vh; /* Increased from 80vh */
-    margin-bottom: 3rem; /* Added bottom margin to ensure content is visible */
-    padding-bottom: 2rem; /* Additional padding for safety */
+    min-height: 90vh;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
   }
-  
+
   .lucia-images-right img:first-child {
-    height: 45vh; /* Increased from 40vh */
+    height: 45vh;
     min-height: 45vh;
   }
 
   .lucia-images-right img:last-child {
-    height: 40vh; /* Increased from 35vh */
+    height: 40vh;
     min-height: 40vh;
   }
-  
+
   .lucia-text-content {
     margin-bottom: 1.5rem;
   }
-  
+
   .lucia-image-left {
-    height: 45vh; /* Increased from 40vh */
-    min-height: 40vh; /* Increased from 35vh */
+    height: 45vh;
+    min-height: 40vh;
     margin-bottom: 1.5rem;
   }
-  
-  /* Ensure the section has enough bottom space */
+
   .lucia-introduction {
     padding-bottom: 3rem;
   }
