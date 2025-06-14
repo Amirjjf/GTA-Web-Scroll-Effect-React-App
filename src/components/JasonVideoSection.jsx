@@ -10,17 +10,16 @@ const JasonVideoSection = () => {
   const [progress, setProgress] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0); // Add raw scroll progress
   const [visibility, setVisibility] = useState(0); // Changed from boolean to number (0-1)
-  const [isBlurred, setIsBlurred] = useState(true);
-
-  useEffect(() => {
+  const [isBlurred, setIsBlurred] = useState(true);  useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;    // Create ScrollTrigger for the video section
+    // Start when section is almost fully in view to ensure SlidingText has completely finished
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
-      start: "top bottom",
+      start: "top 70%",
       end: "bottom center",
       pin: false,
-      scrub: 1, // Reduced from 1 to 0.5 for more immediate response
+      scrub: 1,
       onUpdate: (self) => {
         const rawScrollProgress = self.progress;
         setScrollProgress(rawScrollProgress); // Store raw scroll progress for zoom calculation
@@ -54,11 +53,10 @@ const JasonVideoSection = () => {
       },
       onEnterBack: () => {
         // Video will become visible based on scroll progress
-      },
-      onLeaveBack: () => {
-        // Only hide when scrolling back up past the section
-        // But respect the gradual fade logic
+      },      onLeaveBack: () => {
+        // Completely hide when scrolling back up past the section
         setVisibility(0);
+        setProgress(0); // Reset progress as well
       },
     });
 

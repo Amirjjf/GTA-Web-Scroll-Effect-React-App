@@ -21,7 +21,7 @@ function App() {
       <JasonLuciaCover />
       <div style={{ height: '20vh' }}></div>
       <SlidingText />
-      {/* <div style={{ height: '20vh' }}></div> */}
+      <div style={{ height: '50vh' }}></div>
       <JasonVideoSection />
       <div style={{ height: '100vh' }}></div>
     </div>

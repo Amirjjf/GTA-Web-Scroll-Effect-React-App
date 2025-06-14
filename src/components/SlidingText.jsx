@@ -10,9 +10,9 @@ const SlidingText = ({
   rightText = " Metal Gear Solid Legacy ",
   title = "Experience the",
   highlightedText = "Metal Gear Legacy"
-}) => {
-  const sectionRef = useRef(null);
+}) => {  const sectionRef = useRef(null);
   const titleRef = useRef(null);
+  
   useEffect(() => {
     // Add a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
@@ -26,6 +26,30 @@ const SlidingText = ({
         console.log('Missing elements:', { section, title, leftSlider, rightSlider, textStrong });
         return;
       }
+
+      // Ensure section is visible by default
+      gsap.set(section, { opacity: 1, zIndex: 100 });      // Create visibility control for scroll direction
+      const visibilityTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top bottom",
+        end: "bottom top",
+        onEnter: () => {
+          gsap.set(section, { opacity: 1, zIndex: 100 });
+        },
+        onLeave: () => {
+          // Keep visible but lower z-index when scrolling down past it
+          gsap.set(section, { opacity: 1, zIndex: 50 });
+        },
+        onEnterBack: () => {
+          // Ensure it's visible and above other content when scrolling back up
+          gsap.set(section, { opacity: 1, zIndex: 100 });
+          // Refresh ScrollTrigger to ensure animations work properly when coming back
+          ScrollTrigger.refresh();
+        },
+        onLeaveBack: () => {
+          gsap.set(section, { opacity: 1, zIndex: 100 });
+        }
+      });
 
       // Create title fade and gradient animation
       const titleTimeline = gsap.timeline({ defaults: { ease: "none" } });
@@ -62,12 +86,11 @@ const SlidingText = ({
           scrub: 0,
           animation: slidingTimeline,
         });
-      }
-
-      // Cleanup function
+      }      // Cleanup function
       return () => {
         titleScrollTrigger?.kill();
         slidingScrollTrigger?.kill();
+        visibilityTrigger?.kill();
       };
     }, 100);
 
