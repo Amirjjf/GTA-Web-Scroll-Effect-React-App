@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
-const FRAME_COUNT = 30;
+const FRAME_COUNT = 51;
 const FRAME_PATH = "/Jason_Video/output_";
-const FRAME_EXT = ".jpg";
+const FRAME_EXT = ".png";
 
 function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgress = 0, visibility = 1 }) {
   const [images, setImages] = useState([]);
@@ -57,20 +57,15 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
       cancelled = true;
     };
   }, []);
-
   // Handle visibility and blur based on props
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
-
-    if (show) {
-      // Animate video opacity based on visibility prop (0 to 1)
-      gsap.to(container, {
-        opacity: visibility,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-      // Animate blur separately
+    if (!container) return;    if (show) {
+      // Set opacity and visibility directly without animation for instant response
+      container.style.opacity = visibility;
+      container.style.visibility = 'visible';
+      
+      // Animate blur separately (keep this smooth)
       gsap.to(
         { blur: videoBlur },
         {
@@ -83,12 +78,9 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
         }
       );
     } else {
-      // Faster fade out to prevent conflicts with IntroSection
-      gsap.to(container, {
-        opacity: 0,
-        duration: 0.3, // Reduced from 0.8s to 0.3s for faster hiding
-        ease: "power2.out",
-      });
+      // Instant hide to prevent border visibility
+      container.style.opacity = 0;
+      container.style.visibility = 'hidden';
       setVideoBlur(10);
     }
   }, [show, isBlurred, videoBlur, visibility]);
@@ -193,17 +185,17 @@ function JasonVideo({ show = false, isBlurred = true, progress = 0, scrollProgre
   return (
     <div
       ref={containerRef}
-      className="jason-video-container"
-      style={{
+      className="jason-video-container"      style={{
         position: "fixed",
         top: 0,
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: show ? 50 : 25, // Lower z-index when not showing to prevent conflicts
+        zIndex: show ? 50 : -1, // Negative z-index when not showing to completely hide
         opacity: 0,
         backgroundColor: "#111117",
         pointerEvents: show ? "auto" : "none",
+        visibility: show ? "visible" : "hidden", // Additional layer of hiding
       }}
     >
       <div

@@ -13,10 +13,10 @@ const JasonVideoSection = () => {
   const [isBlurred, setIsBlurred] = useState(true);  useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;    // Create ScrollTrigger for the video section
-    // Start when section is almost fully in view to ensure SlidingText has completely finished
+    // Start when section is at bottom of viewport for smooth fade-in effect
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
-      start: "top 70%",
+      start: "top bottom",
       end: "bottom center",
       pin: false,
       scrub: 1,
@@ -25,24 +25,23 @@ const JasonVideoSection = () => {
         setScrollProgress(rawScrollProgress); // Store raw scroll progress for zoom calculation
         
         // Compress frame animation to 60% of scroll distance for ultra-fast frame changes
-        const frameProgress = Math.min(rawScrollProgress / 0.7, 1);
-        setProgress(frameProgress);
-
-        // Set visibility based on scroll progress with gradual fade after 95%
-        let calculatedVisibility;
-        if (rawScrollProgress <= 0.95) {
-          // Faster visibility mapping - reaches 1 at 60% instead of 95%
-          const adjustedProgress = Math.min(rawScrollProgress / 0.3, 1);
-          calculatedVisibility = Math.max(0, adjustedProgress);
-        } else {
-          // Gradual fade from 1 to 0 for the last 5% (95% to 100%)
-          const fadeProgress = (rawScrollProgress - 0.95) / 0.05; // 0 to 1 for the fade range
-          calculatedVisibility = Math.max(0, 1 - fadeProgress);
+        const frameProgress = Math.min(rawScrollProgress/0.8, 1);
+        setProgress(frameProgress);        // Set visibility based on scroll progress with ultra-smooth fade-in but quick fade-out
+        let calculatedVisibility;        if (rawScrollProgress <= 0.9) {
+          // For forward scroll: Ultra gradual visibility mapping - slow fade in over first 80% of scroll
+          const adjustedProgress = Math.min(rawScrollProgress / 0.8, 1);
+          // Apply double smoothstep for ultra-smooth fade-in
+          const smoothstep1 = adjustedProgress * adjustedProgress * (3.0 - 2.0 * adjustedProgress);
+          const smoothstep2 = smoothstep1 * smoothstep1 * (3.0 - 2.0 * smoothstep1);
+          calculatedVisibility = Math.max(0, smoothstep2);        } else {
+          // Extended gradual fade from 1 to 0 for the last 10% (90% to 100%) - longer range for smoother fade-out
+          const fadeProgress = (rawScrollProgress - 0.9) / 0.1; // 0 to 1 for the fade range
+          // Use smoothstep for gentler fade-out
+          const smoothFadeOut = fadeProgress * fadeProgress * (3.0 - 2.0 * fadeProgress);
+          calculatedVisibility = Math.max(0, 1 - smoothFadeOut);
         }
-        setVisibility(calculatedVisibility);
-        
-        // Control blur based on progress - less blur as we progress
-        setIsBlurred(rawScrollProgress < 0.15);
+        setVisibility(calculatedVisibility);        // Control blur based on progress - coordinate with the ultra-smooth visibility fade-in
+        setIsBlurred(rawScrollProgress < 0.3);
       },
       onEnter: () => {
         // Video will become visible based on scroll progress
@@ -54,9 +53,11 @@ const JasonVideoSection = () => {
       onEnterBack: () => {
         // Video will become visible based on scroll progress
       },      onLeaveBack: () => {
-        // Completely hide when scrolling back up past the section
+        // Instantly hide when scrolling back up past the section
         setVisibility(0);
-        setProgress(0); // Reset progress as well
+        setProgress(0);
+        // Also ensure the show prop is set to false immediately
+        // This will trigger instant opacity change in JasonVideo component
       },
     });
 
@@ -66,12 +67,11 @@ const JasonVideoSection = () => {
   }, []);
 
   return (
-    <>
-      <section
+    <>      <section
         ref={sectionRef}
         style={{
           height: "300vh", // Give enough height for scroll animation
-          backgroundColor: "#111117",
+          backgroundColor: "transparent", // Make background transparent to avoid any border effects
           position: "relative",
         }}
       >
