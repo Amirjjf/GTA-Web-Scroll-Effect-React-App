@@ -5,7 +5,7 @@ import "./JasonLuciaCover.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const JasonLuciaCover = () => {
+const JasonLuciaCover = ({ onImageLoaded }) => {
   const sectionRef = useRef(null);
   const imageRef = useRef(null);
   const containerRef = useRef(null);
@@ -70,6 +70,7 @@ const JasonLuciaCover = () => {
           ref={imageRef}
           src="Jason_and_Lucia.jpg"
           alt="Jason and Lucia Cover"
+          onLoad={onImageLoaded}
         />
       </div>
     </section>

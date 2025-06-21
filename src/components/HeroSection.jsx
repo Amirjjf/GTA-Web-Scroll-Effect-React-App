@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { logoData } from "./logo.js";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -7,7 +7,7 @@ import "./HeroSection.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HeroSection = () => {
+const HeroSection = ({ onImageLoaded }) => {
   const heroRef = useRef(null);
   const heroImgContainerRef = useRef(null);
   const heroImgLogoRef = useRef(null);
@@ -18,6 +18,8 @@ const HeroSection = () => {
   const logoMaskRef = useRef(null);
   const lenisRef = useRef(null);
   const blackTransitionRef = useRef(null);
+  const [bgLoaded, setBgLoaded] = useState(false);
+  const [charactersLoaded, setCharactersLoaded] = useState(false);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -288,17 +290,32 @@ const HeroSection = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (bgLoaded && charactersLoaded && typeof onImageLoaded === 'function') {
+      onImageLoaded();
+    }
+  }, [bgLoaded, charactersLoaded, onImageLoaded]);
+
   return (
     <>
       <section className="hero" ref={heroRef}>
         <div className="hero-img-container" ref={heroImgContainerRef}>
-          <img src="/BackgroundLarge.jpg" alt="Background" />
+          <img
+            src="/BackgroundLarge.jpg"
+            alt="Background"
+            onLoad={() => setBgLoaded(true)}
+          />
 
           <div className="hero-img-logo" ref={heroImgLogoRef}>
             <img src="/logo.svg" alt="logo" />
           </div>
 
-          <img src="/CharactersLarge.png" id="Characters" alt="Characters" />
+          <img 
+            src="/CharactersLarge.png" 
+            id="Characters" 
+            alt="Characters"
+            onLoad={() => setCharactersLoaded(true)}
+            />
 
           <div className="hero-img-copy" ref={heroImgCopyRef}>
             <p>Scroll down to reveal</p>

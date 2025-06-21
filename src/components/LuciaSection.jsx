@@ -1,14 +1,24 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./LuciaSection.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LuciaSection = () => {
+const LuciaSection = ({ onImageLoaded }) => {
   const sectionRef = useRef(null);
   const contentRef = useRef(null);
   const rightImagesRef = useRef(null);
+  const [img1Loaded, setImg1Loaded] = useState(false);
+  const [img2Loaded, setImg2Loaded] = useState(false);
+  const [img3Loaded, setImg3Loaded] = useState(false);
+
+  useEffect(() => {
+    if (img1Loaded && img2Loaded && img3Loaded && typeof onImageLoaded === 'function') {
+      onImageLoaded();
+    }
+  }, [img1Loaded, img2Loaded, img3Loaded, onImageLoaded]);
+
   useEffect(() => {
     const section = sectionRef.current;
     const content = contentRef.current;
@@ -98,10 +108,11 @@ const LuciaSection = () => {
           src="Lucia_Caminos_01.jpg"
           alt="Lucia Caminos Portrait 1"
           className="lucia-image-left"
+          onLoad={() => setImg1Loaded(true)}
         />
         <div className="lucia-images-right" ref={rightImagesRef}>
-          <img src="Lucia_Caminos_02.jpg" alt="Lucia Caminos Portrait 2" />
-          <img src="Lucia_Caminos_03.jpg" alt="Lucia Caminos Portrait 3" />
+          <img src="Lucia_Caminos_02.jpg" alt="Lucia Caminos Portrait 2" onLoad={() => setImg2Loaded(true)} />
+          <img src="Lucia_Caminos_03.jpg" alt="Lucia Caminos Portrait 3" onLoad={() => setImg3Loaded(true)} />
         </div>
       </div>
     </section>

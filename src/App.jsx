@@ -16,9 +16,12 @@ function App() {
   const [jasonLoaded, setJasonLoaded] = useState(false);
   const [luciaProgress, setLuciaProgress] = useState(0);
   const [jasonProgress, setJasonProgress] = useState(0);
+  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
+  const [coverImgLoaded, setCoverImgLoaded] = useState(false);
+  const [luciaSectionLoaded, setLuciaSectionLoaded] = useState(false);
 
-  // Show loading screen until both are loaded
-  const allLoaded = luciaLoaded && jasonLoaded;
+  // Show loading screen until all are loaded
+  const allLoaded = luciaLoaded && jasonLoaded && heroImgLoaded && coverImgLoaded && luciaSectionLoaded;
   const totalProgress = Math.round((luciaProgress + jasonProgress) / 2);
 
   // Use useCallback to avoid unnecessary re-renders
@@ -26,17 +29,20 @@ function App() {
   const handleJasonLoaded = useCallback(() => setJasonLoaded(true), []);
   const handleLuciaProgress = useCallback((p) => setLuciaProgress(p), []);
   const handleJasonProgress = useCallback((p) => setJasonProgress(p), []);
+  const handleHeroImgLoaded = useCallback(() => setHeroImgLoaded(true), []);
+  const handleCoverImgLoaded = useCallback(() => setCoverImgLoaded(true), []);
+  const handleLuciaSectionLoaded = useCallback(() => setLuciaSectionLoaded(true), []);
 
   return (
     <div className="App">
       <div style={{ filter: !allLoaded ? 'blur(8px)' : 'none', pointerEvents: !allLoaded ? 'none' : 'auto' }}>
-        <HeroSection />
+        <HeroSection onImageLoaded={handleHeroImgLoaded} />
         <IntroSection />
         {/* Add spacing div for the intro section scroll area */}
         <div style={{ height: '200vh' }}></div>
         <LuciaVideoSection onLoaded={handleLuciaLoaded} setLoadingProgress={handleLuciaProgress} />
-        <LuciaSection />
-        <JasonLuciaCover />
+        <LuciaSection onImageLoaded={handleLuciaSectionLoaded} />
+        <JasonLuciaCover onImageLoaded={handleCoverImgLoaded} />
         <div style={{ height: '20vh' }}></div>
         <SlidingText />
         <JasonVideoSection onLoaded={handleJasonLoaded} setLoadingProgress={handleJasonProgress} />
