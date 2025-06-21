@@ -11,6 +11,8 @@ function LuciaVideo({
   isBlurred = true,
   progress = 0,
   visibility = 1,
+  onLoaded = () => {}, // NEW PROP
+  setLoadingProgress = null, // NEW PROP
 }) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
@@ -36,20 +38,20 @@ function LuciaVideo({
       img.onload = () => {
         loadedImages[i - 1] = img; // Store in correct position
         loaded++;
-        // setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
+        if (setLoadingProgress) setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
         if (loaded === FRAME_COUNT && !cancelled) {
           setImages([...loadedImages]); // Create new array to trigger re-render
-          // setAllLoaded(true);
+          onLoaded(); // Notify parent
         }
       };
 
       img.onerror = () => {
         console.error(`Failed to load frame ${i}: ${img.src}`);
         loaded++; // Still increment to prevent hanging
-        // setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
+        if (setLoadingProgress) setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
         if (loaded === FRAME_COUNT && !cancelled) {
           setImages([...loadedImages]);
-          // setAllLoaded(true);
+          onLoaded(); // Notify parent
         }
       };
     }
@@ -61,9 +63,10 @@ function LuciaVideo({
           `Only ${loaded}/${FRAME_COUNT} frames loaded after timeout`
         );
         setImages([...loadedImages]);
-        // setAllLoaded(true);
+        onLoaded(); // Notify parent
       }
     }, 5000);
+
     return () => {
       cancelled = true;
     };

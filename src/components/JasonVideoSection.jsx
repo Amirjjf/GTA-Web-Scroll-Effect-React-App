@@ -5,7 +5,7 @@ import JasonVideo from "./JasonVideo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const JasonVideoSection = () => {
+const JasonVideoSection = ({ onLoaded = () => {}, setLoadingProgress = null }) => {
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -77,6 +77,8 @@ const JasonVideoSection = () => {
           progress={progress}
           scrollProgress={scrollProgress}
           visibility={visibility}
+          onLoaded={onLoaded}
+          setLoadingProgress={setLoadingProgress}
         />
       </section>
     </>

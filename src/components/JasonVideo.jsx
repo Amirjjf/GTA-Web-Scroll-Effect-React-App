@@ -11,6 +11,8 @@ function JasonVideo({
   progress = 0,
   scrollProgress = 0,
   visibility = 1,
+  onLoaded = () => {}, // NEW PROP
+  setLoadingProgress = null, // NEW PROP
 }) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
@@ -35,16 +37,22 @@ function JasonVideo({
       img.onload = () => {
         loadedImages[i - 1] = img;
         loaded++;
+        if (setLoadingProgress)
+          setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
         if (loaded === FRAME_COUNT && !cancelled) {
           setImages([...loadedImages]);
+          onLoaded(); // Notify parent
         }
       };
 
       img.onerror = () => {
         console.error(`Failed to load frame ${i}: ${img.src}`);
         loaded++;
+        if (setLoadingProgress)
+          setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
         if (loaded === FRAME_COUNT && !cancelled) {
           setImages([...loadedImages]);
+          onLoaded(); // Notify parent
         }
       };
     }
@@ -56,6 +64,7 @@ function JasonVideo({
           `Only ${loaded}/${FRAME_COUNT} frames loaded after timeout`
         );
         setImages([...loadedImages]);
+        onLoaded(); // Notify parent
       }
     }, 5000);
 

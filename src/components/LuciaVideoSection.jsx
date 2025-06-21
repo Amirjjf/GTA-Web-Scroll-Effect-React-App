@@ -5,7 +5,7 @@ import LuciaVideo from "./LuciaVideo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LuciaVideoSection = () => {
+const LuciaVideoSection = ({ onLoaded = () => {}, setLoadingProgress = null }) => {
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [visibility, setVisibility] = useState(0); // Changed from boolean to number (0-1)
@@ -57,12 +57,13 @@ const LuciaVideoSection = () => {
           position: "relative",
         }}
       >
-        {/* This section provides scrollable content for video frame animation */}{" "}
         <LuciaVideo
           show={visibility > 0}
           isBlurred={isBlurred}
           progress={progress}
           visibility={visibility}
+          onLoaded={onLoaded}
+          setLoadingProgress={setLoadingProgress}
         />
       </section>
     </>
