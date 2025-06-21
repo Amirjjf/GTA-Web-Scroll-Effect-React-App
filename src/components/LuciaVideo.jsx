@@ -70,7 +70,8 @@ function LuciaVideo({
     return () => {
       cancelled = true;
     };
-  }, []); // Handle visibility and blur based on props
+  }, [onLoaded, setLoadingProgress]); // Handle visibility and blur based on props
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;

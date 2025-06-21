@@ -71,7 +71,8 @@ function JasonVideo({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [onLoaded, setLoadingProgress]);
+
   // Handle visibility and blur based on props
   useEffect(() => {
     const container = containerRef.current;
