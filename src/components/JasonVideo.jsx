@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
-const FRAME_COUNT = 51;
+const FRAME_START = 14;
+const FRAME_END = 70;
+const FRAME_COUNT = FRAME_END - FRAME_START + 1;
 const FRAME_PATH = "/Jason_Video/output_";
-const FRAME_EXT = ".png";
+const FRAME_EXT = ".jpg";
 
 function JasonVideo({
   show = false,
@@ -29,13 +31,13 @@ function JasonVideo({
     let loaded = 0;
     let cancelled = false;
 
-    for (let i = 1; i <= FRAME_COUNT; i++) {
+    for (let i = FRAME_START; i <= FRAME_END; i++) {
       const img = new window.Image();
       const paddedIndex = String(i).padStart(4, "0");
       img.src = FRAME_PATH + paddedIndex + FRAME_EXT;
 
       img.onload = () => {
-        loadedImages[i - 1] = img;
+        loadedImages[i - FRAME_START] = img;
         loaded++;
         if (setLoadingProgress)
           setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
@@ -47,6 +49,7 @@ function JasonVideo({
 
       img.onerror = () => {
         console.error(`Failed to load frame ${i}: ${img.src}`);
+        loadedImages[i - FRAME_START] = null;
         loaded++;
         if (setLoadingProgress)
           setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));

@@ -29,7 +29,7 @@ const JasonVideoSection = ({ onLoaded = () => {}, setLoadingProgress = null }) =
         
         if (rawScrollProgress >= 0.3) {
           // Start frame progression from 30% of scroll
-          frameProgress = Math.min((rawScrollProgress - 0.3) / 0.5, 1);
+          frameProgress = Math.min((rawScrollProgress - 0.3) / 0.55, 1);
           setProgress(frameProgress);
           
           // Calculate visibility with gradual fade-in
@@ -66,7 +66,7 @@ const JasonVideoSection = ({ onLoaded = () => {}, setLoadingProgress = null }) =
     <>      <section
         ref={sectionRef}
         style={{
-          height: "400vh", // Increased height for better control
+          height: "300vh", // Increased height for better control
           backgroundColor: "transparent",
           position: "relative",
         }}
