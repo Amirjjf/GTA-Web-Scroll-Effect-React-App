@@ -32,16 +32,16 @@ function App() {
     luciaSectionLoaded &&
     jasonSectionLoaded;
   const assetProgress = [
-    luciaProgress,
-    jasonProgress,
+    luciaProgress || 0,
+    jasonProgress || 0,
     heroImgLoaded ? 100 : 0,
     coverImgLoaded ? 100 : 0,
     luciaSectionLoaded ? 100 : 0,
     jasonSectionLoaded ? 100 : 0,
-    LogoProgress,
+    LogoProgress || 0,
   ];
   const totalProgress = Math.round(
-    assetProgress.reduce((a, b) => a + b, 0) / assetProgress.length
+    assetProgress.reduce((a, b) => (a || 0) + (b || 0), 0) / assetProgress.length
   );
 
   const handleLuciaLoaded = useCallback(() => setLuciaLoaded(true), []);
