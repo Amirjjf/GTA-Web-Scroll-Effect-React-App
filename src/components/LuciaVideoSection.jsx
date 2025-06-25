@@ -5,15 +5,18 @@ import LuciaVideo from "./LuciaVideo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LuciaVideoSection = ({ onLoaded = () => {}, setLoadingProgress = null }) => {
+const LuciaVideoSection = ({
+  onLoaded = () => {},
+  setLoadingProgress = null,
+}) => {
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
-  const [visibility, setVisibility] = useState(0); // Changed from boolean to number (0-1)
+  const [visibility, setVisibility] = useState(0);
   const [isBlurred, setIsBlurred] = useState(true);
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return; // Create ScrollTrigger for the video section
+    if (!section) return;
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
       start: "top bottom",
@@ -52,7 +55,7 @@ const LuciaVideoSection = ({ onLoaded = () => {}, setLoadingProgress = null }) =
       <section
         ref={sectionRef}
         style={{
-          height: "300vh", // Give enough height for scroll animation
+          height: "300vh",
           backgroundColor: "#111117",
           position: "relative",
         }}

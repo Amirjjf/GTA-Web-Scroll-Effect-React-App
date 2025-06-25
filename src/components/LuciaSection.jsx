@@ -14,7 +14,12 @@ const LuciaSection = ({ onImageLoaded }) => {
   const [img3Loaded, setImg3Loaded] = useState(false);
 
   useEffect(() => {
-    if (img1Loaded && img2Loaded && img3Loaded && typeof onImageLoaded === 'function') {
+    if (
+      img1Loaded &&
+      img2Loaded &&
+      img3Loaded &&
+      typeof onImageLoaded === "function"
+    ) {
       onImageLoaded();
     }
   }, [img1Loaded, img2Loaded, img3Loaded, onImageLoaded]);
@@ -111,8 +116,16 @@ const LuciaSection = ({ onImageLoaded }) => {
           onLoad={() => setImg1Loaded(true)}
         />
         <div className="lucia-images-right" ref={rightImagesRef}>
-          <img src="Lucia_Caminos_02.jpg" alt="Lucia Caminos Portrait 2" onLoad={() => setImg2Loaded(true)} />
-          <img src="Lucia_Caminos_03.jpg" alt="Lucia Caminos Portrait 3" onLoad={() => setImg3Loaded(true)} />
+          <img
+            src="Lucia_Caminos_02.jpg"
+            alt="Lucia Caminos Portrait 2"
+            onLoad={() => setImg2Loaded(true)}
+          />
+          <img
+            src="Lucia_Caminos_03.jpg"
+            alt="Lucia Caminos Portrait 3"
+            onLoad={() => setImg3Loaded(true)}
+          />
         </div>
       </div>
     </section>

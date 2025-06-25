@@ -19,7 +19,7 @@ const IntroSection = () => {
         opacity: 0,
         position: "relative",
         pointerEvents: "none",
-        clearProps: "top,left,width,height,zIndex"
+        clearProps: "top,left,width,height,zIndex",
       });
       gsap.set(summary, {
         opacity: 0,
@@ -87,7 +87,7 @@ const IntroSection = () => {
             width: "100vw",
             height: "100vh",
             zIndex: 150,
-            pointerEvents: "auto"
+            pointerEvents: "auto",
           });
         }
       },
@@ -97,7 +97,7 @@ const IntroSection = () => {
             opacity: 0,
             position: "relative",
             pointerEvents: "none",
-            clearProps: "top,left,width,height,zIndex"
+            clearProps: "top,left,width,height,zIndex",
           });
         }
       },
@@ -110,7 +110,7 @@ const IntroSection = () => {
             width: "100vw",
             height: "100vh",
             zIndex: 150,
-            pointerEvents: "auto"
+            pointerEvents: "auto",
           });
         }
       },
@@ -120,7 +120,7 @@ const IntroSection = () => {
             opacity: 0,
             position: "relative",
             pointerEvents: "none",
-            clearProps: "top,left,width,height,zIndex"
+            clearProps: "top,left,width,height,zIndex",
           });
         }
       },
@@ -129,7 +129,8 @@ const IntroSection = () => {
       scrollTrigger.kill();
       resetIntroSection();
     };
-  }, []);  return (
+  }, []);
+  return (
     <section
       className="intro"
       ref={sectionRef}

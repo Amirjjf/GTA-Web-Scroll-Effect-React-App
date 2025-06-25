@@ -14,7 +14,12 @@ const JasonSection = ({ onImageLoaded }) => {
   const [img3Loaded, setImg3Loaded] = useState(false);
 
   useEffect(() => {
-    if (img1Loaded && img2Loaded && img3Loaded && typeof onImageLoaded === 'function') {
+    if (
+      img1Loaded &&
+      img2Loaded &&
+      img3Loaded &&
+      typeof onImageLoaded === "function"
+    ) {
       onImageLoaded();
     }
   }, [img1Loaded, img2Loaded, img3Loaded, onImageLoaded]);
@@ -99,9 +104,10 @@ const JasonSection = ({ onImageLoaded }) => {
           <h1>Jason Duval</h1>
           <h3>Jason's always been good at finding opportunity in chaos.</h3>
           <p>
-            A seasoned criminal with a knack for making the right connections and 
-            wrong enemies. Jason knows the streets like the back of his hand, and 
-            he's not afraid to get them dirty when the job calls for it.
+            A seasoned criminal with a knack for making the right connections
+            and wrong enemies. Jason knows the streets like the back of his
+            hand, and he's not afraid to get them dirty when the job calls for
+            it.
           </p>
         </div>
         <img
@@ -111,8 +117,16 @@ const JasonSection = ({ onImageLoaded }) => {
           onLoad={() => setImg1Loaded(true)}
         />
         <div className="jason-images-right" ref={rightImagesRef}>
-          <img src="Jason_Duval_02.jpg" alt="Jason Duval Portrait 2" onLoad={() => setImg2Loaded(true)} />
-          <img src="Jason_Duval_03.jpg" alt="Jason Duval Portrait 3" onLoad={() => setImg3Loaded(true)} />
+          <img
+            src="Jason_Duval_02.jpg"
+            alt="Jason Duval Portrait 2"
+            onLoad={() => setImg2Loaded(true)}
+          />
+          <img
+            src="Jason_Duval_03.jpg"
+            alt="Jason Duval Portrait 3"
+            onLoad={() => setImg3Loaded(true)}
+          />
         </div>
       </div>
     </section>

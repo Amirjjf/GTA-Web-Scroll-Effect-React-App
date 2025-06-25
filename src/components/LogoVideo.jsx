@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import "./LuciaVideo.css";
+import "./LogoVideo.css";
 
-const FRAME_COUNT = 45;
-const FRAME_PATH = "/Lucia_Caminos_Video_Clip/output_";
+const FRAME_COUNT = 167;
+const FRAME_PATH = "/LogoVideo/output_";
 const FRAME_EXT = ".jpg";
 
-function LuciaVideo({
+function LogoVideo({
   show = false,
   isBlurred = true,
   progress = 0,
@@ -27,13 +27,13 @@ function LuciaVideo({
     let loaded = 0;
     let cancelled = false;
 
-    for (let i = 1; i <= FRAME_COUNT; i++) {
+    for (let i = 76; i <= 242; i++) {
       const img = new window.Image();
       const paddedIndex = String(i).padStart(4, "0");
       img.src = FRAME_PATH + paddedIndex + FRAME_EXT;
 
       img.onload = () => {
-        loadedImages[i - 1] = img;
+        loadedImages[i - 76] = img;
         loaded++;
         if (setLoadingProgress)
           setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
@@ -160,10 +160,11 @@ function LuciaVideo({
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
   }, []);
+
   return (
     <div
       ref={containerRef}
-      className="lucia-video-container"
+      className="logo-video-container"
       style={{
         position: "fixed",
         top: 0,
@@ -206,4 +207,4 @@ function LuciaVideo({
   );
 }
 
-export default LuciaVideo;
+export default LogoVideo;

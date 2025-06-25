@@ -1,60 +1,47 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import JasonVideo from "./JasonVideo";
+import LogoVideo from "./LogoVideo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const JasonVideoSection = ({
+const LogoVideoSection = ({
   onLoaded = () => {},
   setLoadingProgress = null,
 }) => {
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [visibility, setVisibility] = useState(0);
   const [isBlurred, setIsBlurred] = useState(true);
+
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
-      start: "top center",
+      start: "top bottom",
       end: "bottom center",
       pin: false,
       scrub: 1,
       onUpdate: (self) => {
-        const rawScrollProgress = self.progress;
-        setScrollProgress(rawScrollProgress);
-        let calculatedVisibility = 0;
-        let frameProgress = 0;
-        if (rawScrollProgress >= 0.3) {
-          frameProgress = Math.min((rawScrollProgress - 0.3) / 0.55, 1);
-          setProgress(frameProgress);
-          if (rawScrollProgress <= 0.85) {
-            const adjustedProgress = Math.min(
-              (rawScrollProgress - 0.3) / 0.4,
-              1
-            );
-            const easedProgress =
-              adjustedProgress *
-              adjustedProgress *
-              (3.0 - 2.0 * adjustedProgress);
-            calculatedVisibility = Math.max(0, easedProgress);
-          } else {
-            const fadeProgress = (rawScrollProgress - 0.85) / 0.15;
-            calculatedVisibility = Math.max(0, 1 - fadeProgress);
-          }
+        const scrollProgress = self.progress;
+        setProgress(scrollProgress);
+        let calculatedVisibility;
+        if (scrollProgress <= 0.95) {
+          const adjustedProgress = Math.min(scrollProgress / 0.5, 1);
+          calculatedVisibility = Math.max(0, adjustedProgress);
+        } else {
+          const fadeProgress = (scrollProgress - 0.95) / 0.05;
+          calculatedVisibility = Math.max(0, 1 - fadeProgress);
         }
         setVisibility(calculatedVisibility);
-        setIsBlurred(rawScrollProgress < 0.5);
+        setIsBlurred(scrollProgress < 0.15);
       },
       onEnter: () => {},
       onLeave: () => {},
       onEnterBack: () => {},
       onLeaveBack: () => {
         setVisibility(0);
-        setProgress(0);
       },
     });
 
@@ -69,15 +56,14 @@ const JasonVideoSection = ({
         ref={sectionRef}
         style={{
           height: "300vh",
-          backgroundColor: "transparent",
+          backgroundColor: "#111117",
           position: "relative",
         }}
       >
-        <JasonVideo
+        <LogoVideo
           show={visibility > 0}
           isBlurred={isBlurred}
           progress={progress}
-          scrollProgress={scrollProgress}
           visibility={visibility}
           onLoaded={onLoaded}
           setLoadingProgress={setLoadingProgress}
@@ -87,4 +73,4 @@ const JasonVideoSection = ({
   );
 };
 
-export default JasonVideoSection;
+export default LogoVideoSection;

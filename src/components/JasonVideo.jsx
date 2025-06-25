@@ -13,19 +13,18 @@ function JasonVideo({
   progress = 0,
   scrollProgress = 0,
   visibility = 1,
-  onLoaded = () => {}, // NEW PROP
-  setLoadingProgress = null, // NEW PROP
+  onLoaded = () => {},
+  setLoadingProgress = null,
 }) {
   const [images, setImages] = useState([]);
   const [videoBlur, setVideoBlur] = useState(10);
-  const [zoomScale, setZoomScale] = useState(1); // Add zoom scale state
-  const currentFrameRef = useRef(0); // Use ref for smooth animation
+  const [zoomScale, setZoomScale] = useState(1);
+  const currentFrameRef = useRef(0);
   const targetFrameRef = useRef(0);
   const rafRef = useRef(null);
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Preload images
   useEffect(() => {
     const loadedImages = new Array(FRAME_COUNT).fill(null);
     let loaded = 0;
@@ -43,7 +42,7 @@ function JasonVideo({
           setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
         if (loaded === FRAME_COUNT && !cancelled) {
           setImages([...loadedImages]);
-          onLoaded(); // Notify parent
+          onLoaded();
         }
       };
 
@@ -55,19 +54,18 @@ function JasonVideo({
           setLoadingProgress(Math.round((loaded / FRAME_COUNT) * 100));
         if (loaded === FRAME_COUNT && !cancelled) {
           setImages([...loadedImages]);
-          onLoaded(); // Notify parent
+          onLoaded();
         }
       };
     }
 
-    // Fallback in case some images don't load
     setTimeout(() => {
       if (loaded < FRAME_COUNT && !cancelled) {
         console.warn(
           `Only ${loaded}/${FRAME_COUNT} frames loaded after timeout`
         );
         setImages([...loadedImages]);
-        onLoaded(); // Notify parent
+        onLoaded();
       }
     }, 5000);
 
@@ -76,7 +74,6 @@ function JasonVideo({
     };
   }, [onLoaded, setLoadingProgress]);
 
-  // Handle visibility and blur based on props
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -101,7 +98,6 @@ function JasonVideo({
     }
   }, [show, isBlurred, videoBlur, visibility]);
 
-  // Animation loop for smooth frame interpolation and canvas drawing
   useEffect(() => {
     if (images.length === 0) return;
 
@@ -151,39 +147,31 @@ function JasonVideo({
 
     rafRef.current = requestAnimationFrame(animate);
     return () => rafRef.current && cancelAnimationFrame(rafRef.current);
-  }, [images, videoBlur, zoomScale]); // Added zoomScale to dependencies// Update frame based on progress prop
+  }, [images, videoBlur, zoomScale]);
+
   useEffect(() => {
-    // Calculate target frame based on progress (0 to 1)
     const targetFrame = progress * (FRAME_COUNT - 1);
-
-    // Direct assignment for ultra-responsive frame changes
     targetFrameRef.current = targetFrame;
-
-    // For very close frames, snap immediately
     const currentGap = Math.abs(targetFrame - currentFrameRef.current);
     if (currentGap < 0.5) {
-      currentFrameRef.current = targetFrame; // Instant snap for very small changes
+      currentFrameRef.current = targetFrame;
     }
-
-    // Only reset to 0 if both show is false AND progress is 0
     if (!show && progress === 0) {
       targetFrameRef.current = 0;
-      currentFrameRef.current = 0; // Also snap current frame to 0
+      currentFrameRef.current = 0;
     }
   }, [show, progress]);
-  // Calculate zoom effect based on scrollProgress (zoom in from 70% to 100%)
+
   useEffect(() => {
     if (scrollProgress >= 0.7) {
-      // Progress from 0.7 to 1.0 maps to zoom from 1.0 to 1.15 (15% zoom)
-      const zoomProgress = (scrollProgress - 0.7) / 0.3; // 0 to 1 for the zoom range
-      const calculatedZoom = 1 + zoomProgress * 0.05; // 1.0 to 1.15
+      const zoomProgress = (scrollProgress - 0.7) / 0.3;
+      const calculatedZoom = 1 + zoomProgress * 0.05;
       setZoomScale(calculatedZoom);
     } else {
-      setZoomScale(1); // No zoom below 70% progress
+      setZoomScale(1);
     }
   }, [scrollProgress]);
 
-  // Responsive canvas size
   useEffect(() => {
     const resize = () => {
       if (!canvasRef.current) return;
@@ -205,11 +193,11 @@ function JasonVideo({
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: show ? 50 : -1, // Negative z-index when not showing to completely hide
+        zIndex: show ? 50 : -1,
         opacity: 0,
         backgroundColor: "#111117",
         pointerEvents: show ? "auto" : "none",
-        visibility: show ? "visible" : "hidden", // Additional layer of hiding
+        visibility: show ? "visible" : "hidden",
       }}
     >
       <div
