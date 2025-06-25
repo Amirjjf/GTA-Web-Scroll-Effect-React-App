@@ -8,17 +8,27 @@ gsap.registerPlugin(ScrollTrigger);
 const IntroSection = () => {
   const sectionRef = useRef(null);
   const summaryRef = useRef(null);
-
   useEffect(() => {
     const introSection = sectionRef.current;
     const summary = summaryRef.current;
     if (!introSection || !summary) return;
 
-    gsap.set(summary, {
-      opacity: 0,
-      scale: 1.1,
-      clipPath: "circle(20% at 50% 50%)",
-    });
+    // Reset all styles first
+    const resetIntroSection = () => {
+      gsap.set(introSection, {
+        opacity: 0,
+        position: "relative",
+        pointerEvents: "none",
+        clearProps: "top,left,width,height,zIndex"
+      });
+      gsap.set(summary, {
+        opacity: 0,
+        scale: 1.1,
+        clipPath: "circle(20% at 50% 50%)",
+      });
+    };
+
+    resetIntroSection();
 
     const heroScrollDistance = window.innerHeight * 5;
     const scrollTrigger = ScrollTrigger.create({
@@ -28,6 +38,7 @@ const IntroSection = () => {
       pin: introSection,
       pinSpacing: false,
       scrub: 1,
+      invalidateOnRefresh: true,
       onUpdate: (self) => {
         const progress = self.progress;
 
@@ -69,42 +80,56 @@ const IntroSection = () => {
       },
       onEnter: () => {
         if (introSection) {
-          introSection.style.pointerEvents = "auto";
-          introSection.style.position = "fixed";
-          introSection.style.top = "0";
-          introSection.style.left = "0";
-          introSection.style.width = "100vw";
-          introSection.style.height = "100vh";
-          introSection.style.zIndex = "150";
+          gsap.set(introSection, {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 150,
+            pointerEvents: "auto"
+          });
         }
       },
       onLeave: () => {
-        if (introSection) introSection.style.pointerEvents = "none";
+        if (introSection) {
+          gsap.set(introSection, {
+            opacity: 0,
+            position: "relative",
+            pointerEvents: "none",
+            clearProps: "top,left,width,height,zIndex"
+          });
+        }
       },
       onEnterBack: () => {
         if (introSection) {
-          introSection.style.pointerEvents = "auto";
-          introSection.style.position = "fixed";
-          introSection.style.top = "0";
-          introSection.style.left = "0";
-          introSection.style.width = "100vw";
-          introSection.style.height = "100vh";
-          introSection.style.zIndex = "150";
+          gsap.set(introSection, {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 150,
+            pointerEvents: "auto"
+          });
         }
       },
       onLeaveBack: () => {
         if (introSection) {
-          introSection.style.pointerEvents = "none";
-          introSection.style.position = "relative";
-          introSection.style.zIndex = "150";
+          gsap.set(introSection, {
+            opacity: 0,
+            position: "relative",
+            pointerEvents: "none",
+            clearProps: "top,left,width,height,zIndex"
+          });
         }
       },
     });
     return () => {
       scrollTrigger.kill();
+      resetIntroSection();
     };
-  }, []);
-  return (
+  }, []);  return (
     <section
       className="intro"
       ref={sectionRef}
@@ -113,7 +138,6 @@ const IntroSection = () => {
         opacity: 0,
         height: "100vh",
         position: "relative",
-        zIndex: 150,
       }}
     >
       <div className="summary" ref={summaryRef}>

@@ -97,6 +97,8 @@ const HeroSection = ({ onImageLoaded }) => {
 
     updateLogoPosition();
     window.addEventListener("resize", updateLogoPosition);
+    let prevScrollProgress = 0;
+    let isScrollingUp = false;
     ScrollTrigger.create({
       trigger: heroRef.current,
       start: "top top",
@@ -104,11 +106,13 @@ const HeroSection = ({ onImageLoaded }) => {
       pin: true,
       pinSpacing: true,
       scrub: 1,
+      invalidateOnRefresh: true,
       onUpdate: (self) => {
         const scrollProgress = self.progress;
-
+        // Determine scroll direction
+        isScrollingUp = scrollProgress < prevScrollProgress;
+        prevScrollProgress = scrollProgress;
         const fadeOpacity = 1 - scrollProgress * (1 / 0.15);
-
         if (scrollProgress < 0.15) {
           gsap.set([heroImgLogo, heroImgCopy], {
             opacity: fadeOpacity,
@@ -118,7 +122,6 @@ const HeroSection = ({ onImageLoaded }) => {
             opacity: 0,
           });
         }
-
         if (scrollProgress < 0.85) {
           const normalizedProgress = scrollProgress * (1 / 0.85);
           const heroImgContainerScale = 1.5 - 0.5 * normalizedProgress;
@@ -126,22 +129,20 @@ const HeroSection = ({ onImageLoaded }) => {
             initialOverlayScale *
             Math.pow(1 / initialOverlayScale, normalizedProgress);
           let fadeoverlayOpacity = 0;
-
           gsap.set(heroImgContainer, {
             scale: heroImgContainerScale,
+            opacity: 1,
           });
-
           gsap.set(svgOverlay, {
             scale: overlayScale,
+            opacity: 1,
           });
-
           if (scrollProgress > 0.25) {
             fadeoverlayOpacity = Math.min(
               1,
               (scrollProgress - 0.25) * (1 / 0.4)
             );
           }
-
           gsap.set(fadeOverlay, {
             opacity: fadeoverlayOpacity,
           });
@@ -232,32 +233,43 @@ const HeroSection = ({ onImageLoaded }) => {
           gsap.set(overlayCopy, {
             opacity: 0,
           });
-        }
-        if (scrollProgress > 0.85) {
+        }        if (scrollProgress > 0.85) {
           const overallTransitionProgress = (scrollProgress - 0.85) / 0.15;
 
-          let calculatedBlackOverlayOpacity = 0;
-          const blackTransitionRampUpEndProgress = (0.92 - 0.85) / 0.15;
-          if (overallTransitionProgress <= blackTransitionRampUpEndProgress) {
-            calculatedBlackOverlayOpacity =
-              overallTransitionProgress / blackTransitionRampUpEndProgress;
+          // Handle black overlay opacity differently when scrolling up
+          if (isScrollingUp) {
+            // When scrolling up, keep black overlay fully visible until we hit 0.85
+            gsap.set(blackTransition, { opacity: 1 });
+
+            // Keep hero elements and fade overlay hidden when scrolling up in this range
+            gsap.set([heroImgContainer, fadeOverlay], { opacity: 0 });
           } else {
-            calculatedBlackOverlayOpacity = 1;
+            // Original behavior for scrolling down
+            let calculatedBlackOverlayOpacity = 0;
+            const blackTransitionRampUpEndProgress = (0.92 - 0.85) / 0.15;
+            if (overallTransitionProgress <= blackTransitionRampUpEndProgress) {
+              calculatedBlackOverlayOpacity =
+                overallTransitionProgress / blackTransitionRampUpEndProgress;
+            } else {
+              calculatedBlackOverlayOpacity = 1;
+            }
+            gsap.set(blackTransition, {
+              opacity: Math.min(1, Math.max(0, calculatedBlackOverlayOpacity)),
+            });
+
+            const heroBackgroundElementsOpacity = 1 - overallTransitionProgress;
+            gsap.set([heroImgContainer, fadeOverlay], {
+              opacity: Math.min(1, Math.max(0, heroBackgroundElementsOpacity)),
+            });
           }
-          gsap.set(blackTransition, {
-            opacity: Math.min(1, Math.max(0, calculatedBlackOverlayOpacity)),
-          });
 
-          const heroBackgroundElementsOpacity = 1 - overallTransitionProgress;
-          gsap.set([heroImgContainer, fadeOverlay], {
-            opacity: Math.min(1, Math.max(0, heroBackgroundElementsOpacity)),
-          });
-
+          // Apply gradual fade for svgOverlay regardless of scroll direction
           const svgLogoOpacity = 1 - Math.pow(overallTransitionProgress, 5);
           gsap.set(svgOverlay, {
             opacity: Math.min(1, Math.max(0, svgLogoOpacity)),
           });
 
+          // Apply gradual fade for overlayCopy regardless of scroll direction
           let textOverlayOpacity = 1;
           const textOverlayFadeStartScroll = 0.87;
 
@@ -276,7 +288,26 @@ const HeroSection = ({ onImageLoaded }) => {
           gsap.set(blackTransition, {
             opacity: 0,
           });
+          // Ensure fade overlay is handled by the < 0.85 logic above
         }
+      },
+      onLeave: () => {
+        // Reset all states when leaving the hero section completely
+        gsap.set([heroImgLogo, heroImgCopy], { opacity: 1 });
+        gsap.set(heroImgContainer, { scale: 1.5 });
+        gsap.set(fadeOverlay, { opacity: 0 });
+        gsap.set(svgOverlay, { scale: initialOverlayScale, opacity: 1 });
+        gsap.set(overlayCopy, { opacity: 0, scale: 1.25 });
+        gsap.set(blackTransition, { opacity: 0 });
+      },
+      onEnterBack: () => {
+        // Reset all elements to prevent flashes when scrolling back up
+        gsap.set(fadeOverlay, { opacity: 0 });
+        gsap.set(heroImgContainer, { opacity: 1, scale: 1 }); // Keep visible to cover fade overlay
+        gsap.set(blackTransition, { opacity: 1 });
+        gsap.set(svgOverlay, { opacity: 0, scale: initialOverlayScale });
+        gsap.set([heroImgLogo, heroImgCopy], { opacity: 0 });
+        gsap.set(overlayCopy, { opacity: 0, scale: 1.25 });
       },
     });
 
