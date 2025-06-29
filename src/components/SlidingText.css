@@ -8,7 +8,8 @@
   display: flex;
   flex-direction: column;
   z-index: 100;
-  background-color: #111117;
+  /* background-color: #111117; */
+  background: transparent;
 }
 
 

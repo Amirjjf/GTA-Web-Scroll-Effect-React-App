@@ -17,9 +17,13 @@ const JasonVideoSection = ({
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    const prevSection = document.querySelector(".sliding-section");
+    const vhOffset = Math.round(window.innerHeight * 0.5);
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
-      start: "top center",
+      start: prevSection
+        ? `top bottom+=${prevSection.offsetHeight + vhOffset}`
+        : `top bottom+=${vhOffset}`,
       end: "bottom center",
       pin: false,
       scrub: 1,
