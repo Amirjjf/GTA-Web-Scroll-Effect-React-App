@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import HeroSection from "./components/HeroSection";
 import IntroSection from "./components/IntroSection";
 import LuciaVideoSection from "./components/LuciaVideoSection";
@@ -59,6 +59,17 @@ function App() {
     []
   );
   const handleLogoProgress = useCallback((p) => setLogoProgress(p), []);
+
+  useEffect(() => {
+    if (!allLoaded) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [allLoaded]);
 
   return (
     <div className="App">
