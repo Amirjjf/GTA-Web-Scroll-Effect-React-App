@@ -8,14 +8,12 @@ const FRAME_EXT = ".jpg";
 
 function LogoVideo({
   show = false,
-  isBlurred = true,
   progress = 0,
   visibility = 1,
   onLoaded = () => {},
   setLoadingProgress = null,
 }) {
   const [images, setImages] = useState([]);
-  const [videoBlur, setVideoBlur] = useState(10);
   const currentFrameRef = useRef(0);
   const targetFrameRef = useRef(0);
   const rafRef = useRef(null);
@@ -74,32 +72,12 @@ function LogoVideo({
     const container = containerRef.current;
     if (!container) return;
 
-    if (show) {
-      gsap.to(container, {
-        opacity: visibility,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-      gsap.to(
-        { blur: videoBlur },
-        {
-          blur: isBlurred ? 8 : 0,
-          duration: 0.8,
-          ease: "power2.out",
-          onUpdate: function () {
-            setVideoBlur(this.targets()[0].blur);
-          },
-        }
-      );
-    } else {
-      gsap.to(container, {
-        opacity: 0,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-      setVideoBlur(10);
-    }
-  }, [show, isBlurred, videoBlur, visibility]);
+    gsap.to(container, {
+      opacity: visibility,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  }, [show, visibility]);
 
   useEffect(() => {
     if (images.length === 0) return;
@@ -111,7 +89,6 @@ function LogoVideo({
       const img = images[frameIdx];
       if (img && img.complete && img.naturalWidth > 0) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        ctx.filter = `blur(${videoBlur}px)`;
         const canvasW = canvasRef.current.width;
         const canvasH = canvasRef.current.height;
         const imgW = img.width;
@@ -122,7 +99,6 @@ function LogoVideo({
         const offsetX = (canvasW - drawW) / 2;
         const offsetY = (canvasH - drawH) / 2;
         ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-        ctx.filter = "none";
       } else {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
@@ -140,7 +116,7 @@ function LogoVideo({
     };
     rafRef.current = requestAnimationFrame(animate);
     return () => rafRef.current && cancelAnimationFrame(rafRef.current);
-  }, [images, videoBlur]);
+  }, [images]);
 
   useEffect(() => {
     const targetFrame = progress * (FRAME_COUNT - 1);
@@ -197,7 +173,6 @@ function LogoVideo({
             height: "100vh",
             display: "block",
             background: "#111117",
-            transition: "filter 0.8s ease-out",
           }}
           draggable="false"
           onContextMenu={(e) => e.preventDefault()}

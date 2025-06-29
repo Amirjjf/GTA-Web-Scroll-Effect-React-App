@@ -12,7 +12,6 @@ const LogoVideoSection = ({
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [visibility, setVisibility] = useState(0);
-  const [isBlurred, setIsBlurred] = useState(true);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -35,7 +34,6 @@ const LogoVideoSection = ({
           calculatedVisibility = Math.max(0, 1 - fadeProgress);
         }
         setVisibility(calculatedVisibility);
-        setIsBlurred(scrollProgress < 0.15);
       },
       onEnter: () => {},
       onLeave: () => {},
@@ -62,7 +60,6 @@ const LogoVideoSection = ({
       >
         <LogoVideo
           show={visibility > 0}
-          isBlurred={isBlurred}
           progress={progress}
           visibility={visibility}
           onLoaded={onLoaded}
