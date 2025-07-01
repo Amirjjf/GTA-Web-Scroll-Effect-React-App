@@ -23,6 +23,7 @@ function App() {
   const [luciaSectionLoaded, setLuciaSectionLoaded] = useState(false);
   const [jasonSectionLoaded, setJasonSectionLoaded] = useState(false);
   const [LogoProgress, setLogoProgress] = useState(0);
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   const allLoaded =
     luciaLoaded &&
@@ -30,7 +31,8 @@ function App() {
     heroImgLoaded &&
     coverImgLoaded &&
     luciaSectionLoaded &&
-    jasonSectionLoaded;
+    jasonSectionLoaded &&
+    logoLoaded;
   const assetProgress = [
     luciaProgress || 0,
     jasonProgress || 0,
@@ -59,6 +61,7 @@ function App() {
     []
   );
   const handleLogoProgress = useCallback((p) => setLogoProgress(p), []);
+  const handleLogoLoaded = useCallback(() => setLogoLoaded(true), []);
 
   useEffect(() => {
     if (!allLoaded) {
@@ -96,7 +99,7 @@ function App() {
         />
         <JasonSection onImageLoaded={handleJasonSectionLoaded} />
         <LogoVideoSection
-          onLoaded={handleLogoProgress}
+          onLoaded={handleLogoLoaded}
           setLoadingProgress={handleLogoProgress}
         />
         <div style={{ height: "150vh" }}></div>
